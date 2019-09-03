@@ -9,8 +9,7 @@ set.seed(784123)
 
 # load data
 br_df <- read_csv("data/politics_and_need_rescale.csv") %>%
-  mutate(dem_governor = -1*gop_governor) %>%
-  glimpse()
+  mutate(dem_governor = -1*gop_governor)
 
 # create model formula for the model shown in their Figure 2, p. 446
 f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
@@ -41,7 +40,7 @@ conv_df <- 10^exponent %>%
   map(~ fit_and_get_f(.)) %>%
   bind_rows() %>%
   mutate(e_text = paste0("10^", exponent)) %>%
-  glimpse()
+  write_csv("output/br-convergence-gh.csv") 
 
 # plot the lr p-value against the se
 ggplot(conv_df, aes(x = se_hat, y = lr_p)) + 
@@ -55,5 +54,5 @@ ggplot(conv_df, aes(x = se_hat, y = lr_p)) +
 
 # save plots
 ggsave("doc/fig/br-convergence.pdf", height = 3, width = 4, scale = 1.5)
-ggsave("doc/fig/br-convergence.png", height = 3, width = 4, scale = 1.5)
+ggsave("doc/fig/br-convergence-gh.png", height = 3, width = 4, scale = 1.5)
 
