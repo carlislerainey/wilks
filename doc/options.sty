@@ -1,0 +1,26 @@
+% initial version from https://github.com/zmjones/rfss/blob/master/options.sty
+
+\usepackage{setspace}
+\doublespacing
+\usepackage[vmargin=1in,hmargin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Set paragraph spacing the way I like
+\parskip=0pt
+\parindent=20pt
+
+%Set up fonts the way I like, see https://tex.stackexchange.com/a/324757
+% Palatino for main text and math
+\usepackage[osf,sc]{mathpazo}
+% Helvetica for sans serif
+% (scaled to match size of Palatino)
+\usepackage[scaled=0.90]{helvet}
+% Bera Mono for monospaced
+% (scaled to match size of Palatino)
+\usepackage[scaled=0.85]{beramono}
+
+% use sans for for headers
+\usepackage{sectsty}
+\allsectionsfont{\normalfont\sffamily\bfseries}

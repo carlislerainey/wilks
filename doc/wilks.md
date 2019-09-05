@@ -1,11 +1,8 @@
----
-title: "Meaningful Hypothesis Tests Under Separation (Without Prior Information)"
-author: "Carlisle Rainey"
-csl: bib/apsr.csl
-output: 
-  pdf_document: default
-bibliography: bib/bibliography.bib
----
+% $p$-Values Without Penalties With Perfect Predictions[^version]
+% Carlisle Rainey[^contact]
+
+[^version]: Draft under developement. This is the version as of \today.
+[^contact]: Carlisle Rainey is Associate Professor of Political Science, Florida State University, 540 Bellamy, Tallahassee, FL, 32306. (\href{mailto:crainey@fsu.edu}{crainey@fsu.edu}).
 
 Separation commonly occurs in political science, usually when the presence (or absence) of a binary explanatory variable perfectly predicts the presence or absence of a binary outcome [e.g., @BellMiller2015; @Mares2015; @ViningWilhelmCollens2015]. Under separation, maximum likelihood estimation leads to infinite coefficient estimates and standards errors. In practice, though, optimization routines converge before reaching infinite estimates and return implausibly large finite estimates and standard errors. 
 
