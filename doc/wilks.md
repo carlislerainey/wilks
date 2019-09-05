@@ -20,4 +20,22 @@ As a solution, @Zorn2005 [see also @HeinzeSchemper2002] points political scienti
 
 But researchers cannot access useful prior information in all contexts, and some scholars prefer to avoid injecting prior information into the model. How can researchers proceed in these situations? Below, I show that while maximum likelihood produces implausibly large estimates under separation and standard errors, standard likelihood ratio tests behave in the usual manner. As such, researchers can produce meaningful $p$-values with a standard, well-known tool even while eyeing the coefficient estimates with suspicion.
 
+# Statistial Theory
+
+## Wald Test
+
+## Likelihood Ratio Test
+
+# Illustrations
+
+To illustrate the simplicity of hypothesis testing cunder separation compared to estimation, I reanalyze data from @BarrilleauxRainey2014 and @BellMiller2015 the that @Rainey2016 considers in great detail. For @BarrilleauxRainey2014, the likelihood ratio test provides a useful evaluation of their substantive claims. For @BellMiller2015 the likelihood ratio test proves less useful. 
+
+## @BarrilleauxRainey2014
+
+@BarrilleauxRainey2014 examine U.S. state governors decisions to support or oppose the Medicaid expansion under the 2010 Affordable Care Act. But because all Democratic governors supported the expansion, separation occurs--Democratic governors perfectly predict support for Medicaid expansion.
+
+\tiny
+\input{doc/tab/br-fits.tex}
+\normalsize
+
 # References
