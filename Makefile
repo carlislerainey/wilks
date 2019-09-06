@@ -21,6 +21,7 @@ doc/fig/br-fits.pdf doc/fig/br-fits-gh.png doc/tab/br-fits.tex doc/tab/br-fits-g
 # manuscript 
 doc/wilks.pdf: doc/wilks.md doc/options.sty
 	pandoc -H doc/options.sty -V fontsize=12pt $< -o $@ --bibliography=doc/bib/bibliography.bib --csl doc/bib/apsr.csl
+	open doc/wilks.pdf
 
 # cleaning phonys
 clean:

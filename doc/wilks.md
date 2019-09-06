@@ -1,8 +1,15 @@
-% $p$-Values Without Penalties With Perfect Predictions[^version]
+% $p$-Values Without Penalties With Perfect Predictions
 % Carlisle Rainey[^contact]
 
-[^version]: Draft under developement. This is the version as of \today.
 [^contact]: Carlisle Rainey is Associate Professor of Political Science, Florida State University, 540 Bellamy, Tallahassee, FL, 32306. (\href{mailto:crainey@fsu.edu}{crainey@fsu.edu}).
+
+-----
+
+\begin{quote}
+Draft under developement. It's no doubt filled with typos and errors. This is the version from \today.
+\end{quote}
+
+-----
 
 Separation commonly occurs in political science, usually when the presence (or absence) of a binary explanatory variable perfectly predicts the presence or absence of a binary outcome [e.g., @BellMiller2015; @Mares2015; @ViningWilhelmCollens2015]. Under separation, maximum likelihood estimation leads to infinite coefficient estimates and standards errors. In practice, though, optimization routines converge before reaching infinite estimates and return implausibly large finite estimates and standard errors. 
 
@@ -22,7 +29,59 @@ But researchers cannot access useful prior information in all contexts, and some
 
 # Statistial Theory
 
+Maximum likelihood provides a general and powerful framework for obtaining estimates of regression models. In our case of logistic regression, we write the probability $\pi_i$ that an event occurs for observation $i$ (or that the outcome variable $y_i = 1$) as 
+
+\begin{equation}
+\pi_i = \text{logit}^{-1}(X_i\beta)\text{ for } i = 1, 2, ... , n \text{, }
+\end{equation}
+
+\noindent where $X$ is a matrix of covariates and $\beta$ is a vector of regression coefficients. To obtain the likelihood function, simply compute the product of the probabilities of each $y_i$. If $y_i = 1$, then this probability equals $\pi_i$. If $y_i = 0$, then this probability equals $1 - \pi_i$ Using some clever algebra, the probability of each $y_i$ is $p_{i}^{y_i}(1 - p_{i})^{(1 - y_i)}$. We refer to this function as the "likelihood function," so that 
+
+\begin{equation}
+L(\beta | y) = p_{i}^{y_i}(1 - p_{i})^{(1 - y_i)}\text{,  where } \pi_i = \text{logit}^{-1}(X_i\beta)
+\end{equation}
+
+To obtain the maximum likelihood estimates $\hat{\beta}^{ML}$, we simply find the maximum of the likelihood function with respect to $\beta$. Thus, we use as our estimate of $\beta$ the values that would most likely generate the observed data.
+
+In practice, though, we typically work with the log-likelihood function. For convenience, I denote the log-likelihood function as $\ell$. In this case, $\ell(\beta | y) = \log L(\beta | y) = y_i \log(p_{i}) + (1 - y_i) \log(1 - p_{i})$.
+
+To obtain the maximum likelihood estimates, we use numerical algorithms to locate the value of $\beta$ that maximizes $\ell$.
+
+But with the maximum likelihood estimates in hand, researchers typically want information about the precision of those estimates. In some cases, researchers want to compare their research hypothesis $H_R$ to a null hypothesis $H_0$. To conduct a hypothesis test in the context of logistic regression, the research composes a null hypothesis $H_0:\beta \in B_0 \subset R^n$, which leaves the research hypothesis $H_R: \beta \in B_0^C$. Depending on the data,the researcher may then choose to reject $H_0$ in favor of $H_R$ or fail to distinguish between the two.
+
+To fix ideas, suppose the simple point null hypothesis $H_0: \beta_1 = 0$. 
+
+In order to assess the plausiblitity of the null hypothesis, we must compare the null hypothesis with the maximum likelihood estimates, accounting for the precision of the estimates.
+
+The precision follows from the shape of the (log-)likelihood function. If small changes in $\beta$ lead to large changes in the likelihood function, then we can take the maximum likelihood estimates as precise. However, if large changes in $\beta$ lead to small changes in the likelihood function, then we must treat the estimates as imprecise.
+
+The methodology literature offers two common tools to formally compare the the null hypothesis to the maximum likelihood estimates.
+
 ## Wald Test
+
+First, the Wald test quantifies the curvature of $\ell$ at $\hat{\beta}^{ML}$. If $\ell$ descends rapidly away from $\hat{\beta}^{ML}$, then we take $\hat{\beta}^{ML}$ as a precise estimate. A second derivative intuitively quantifies the notion of "curvature," and it turns out that
+
+\begin{equation}
+\widehat{\text{Var}}(\beta) = \left( - \dfrac{\partial^2 \ell(\hat{\beta}^{ML} | y)}{\partial \hat{\beta}^{ML} \partial \left[ \hat{\beta}^{ML} \right]'} \right)^{-1}\text{,}
+\end{equation}
+
+so that 
+
+\begin{equation}\label{eqn:ml-se}
+\widehat{\text{SE}}(\hat{\beta}_i^{ML}) = \left( - \dfrac{\partial^2 \ell(\hat{\beta}_i^{ML} | y)}{\partial^2 \hat{\beta}_i^{ML}} \right)^{-\frac{1}{2}}\text{.}
+\end{equation}
+
+\noindent The curvature of the log-likelihood functions provides a direct method to estimate the standard error of the maximum likelihood estimates. 
+
+For large (repeated) samples, the maximum likelihood estimates follow a normal distribution centered at the true value of $\beta$ with a standard deviation of $\widehat{\text{SE}}(\hat{\beta}_i^{ML})$ from Equation \ref{eqn:ml-se}.
+
+Using this large-sample approximation, we can perform a $z$-test for our $H_0$. 
+
+\begin{equation}
+\text{Wald } p\text{-value} = \Pr(|z| > 1.65) = 2\Phi(|z|)\text{, where }z = \dfrac{\hat{\beta}_i^{ML}}{\widehat{\text{SE}}(\hat{\beta}_i^{ML})}.
+\end{equation}
+
+Following the usual procedure in political science researcher, if the $p$-value is less than 0.05, the researher rejects the null hypothesis (that $\beta_i = 0$, in this case) in favor of the research hypothesis (that $\beta_i \neq 0$, in this case). if the $p$-value is greater than 0.05, then the research cannot distinguish between the two hypotheses.
 
 ## Likelihood Ratio Test
 
