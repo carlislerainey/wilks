@@ -83,7 +83,17 @@ Using this large-sample approximation, we can perform a $z$-test for our $H_0$.
 
 Following the usual procedure in political science researcher, if the $p$-value is less than 0.05, the researher rejects the null hypothesis (that $\beta_i = 0$, in this case) in favor of the research hypothesis (that $\beta_i \neq 0$, in this case). if the $p$-value is greater than 0.05, then the research cannot distinguish between the two hypotheses.
 
+For the simple null hypothesis $H_0$ that $\beta_1 = 0$ (contraint in only one dimmension), we have  
+
+\begin{equation}
+\text{likelihood ratio } p\text{-value} = \Pr(D > 1.65) = 2\Phi(|z|)\text{, where }z = \dfrac{\hat{\beta}_i^{ML}}{\widehat{\text{SE}}(\hat{\beta}_i^{ML})}.
+\end{equation}
+
 ## Likelihood Ratio Test
+
+Rather than use the precision of the maximum likelihood estimates to test the null hypothesis against the research hypothesis, the Likelihood Ratio test compares the value of $\ell(\hat{\beta}^{ML} | y)$ to $\ell(\hat{\beta}^{ML_0} | y)$, where $\hat{\beta}^{ML_0}$ represents the maximum likelihood estimates contrained to be consistent with the null hypothesis. For the simple null hypothesis $H_0$ that $\beta_1 = 0$, we can simple fit a separate model without the explanatory variable $x_1$. 
+
+If the data are much more likely under maximum likelihood estimates $\hat{\beta}^{ML}$ than under the contrained maximum likelihood estiamtes $\hat{\beta}^{ML_0}$, the researcher can reject the null hypothesis. Wilk's theorem advises us how to compare the two likelihoods. Wilk's theorem notes that $D = 2 \times \left[ \ell(\hat{\beta}^{ML} | y) - \ell(\hat{\beta}^{ML_0} | y) \right]$ follows a $\chi^2$ distribution with degrees of freedom equal to the number of contrained dimmensions.
 
 # Illustrations
 
