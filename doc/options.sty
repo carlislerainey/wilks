@@ -7,6 +7,12 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{array}
+%\usepackage{float}
+\usepackage[font = sf]{floatrow}
+\floatsetup[table]{style=plaintop}
+\usepackage[font = sf]{caption}
+%\usepackage{tabu}
+\usepackage[online]{threeparttablex}
 
 % Set paragraph spacing the way I like
 \parskip=0pt
@@ -24,4 +30,9 @@
 
 % use sans for for headers
 \usepackage{sectsty}
-\allsectionsfont{\normalfont\sffamily\bfseries}
+\allsectionsfont{\normalfont\sffamily}
+
+% a container to store captions
+\newcommand{\captiontext}{empty}
+\newcommand{\notetext}{empty}
+

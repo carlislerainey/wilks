@@ -103,8 +103,24 @@ To illustrate the simplicity of hypothesis testing cunder separation compared to
 
 @BarrilleauxRainey2014 examine U.S. state governors decisions to support or oppose the Medicaid expansion under the 2010 Affordable Care Act. But because all Democratic governors supported the expansion, separation occurs--Democratic governors perfectly predict support for Medicaid expansion.
 
-\tiny
-\input{doc/tab/br-fits.tex}
-\normalsize
+I focus on their first hypothesis:
+
+> Republican governors are more likely to oppose the Medicaid expansion funds than Democratic governors.
+
+In part to address separation, Barrilleaux and Rainey adopt a fully Bayesian approach. Here, I re-estiamte Barrilleaux and Rainey's (2014) logistic regression model using several frequentist procedures. Table \ref{tab:br-p} presents these results.
+
+\renewcommand{\captiontext}{}
+\renewcommand{\notetext}{This table shows the $p$-values from several procedures that researcers might use when dealing with separation in logistic regression models. The Wald test relies on unreasonable standard errors that depend heavily on the precision of the algorithm and, as a consequence, produces unrealistic $p$-values. However, the $p$-values from the likelihood ratio test seem reasonable and resemble the $p$-vales from the more conservative penalized maximum likelihood approaches.}
+\begin{table}[!h]
+\caption{\label{tab:br-p}\captiontext}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{threeparttable}
+\input{doc/tab/br-fits-s.tex}
+\begin{tablenotes}[para]
+\notetext
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 # References
