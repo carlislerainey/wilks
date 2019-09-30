@@ -10,6 +10,14 @@ notes that the penalty is a meaningful, substantive decision (Rainey
 ratio to compute reasonable, well-behaved *p*-values without using
 frequentist penalties or prior information.
 
+The latest (in-progress) draft is [here](doc/wilks.pdf).
+
+# Directory Structure
+
+I named files and directory so that their purpose can (hopefully) be
+understood from the name. The [`Makefile`](Makefile) formally documents
+the relationship among the files and the steps to reproduce my work.
+
 # Key Figures and Tables
 
 ![Barrilleaux and Rainey (2014)](doc/tab/br-fits-s-gh.png)
