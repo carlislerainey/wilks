@@ -35,15 +35,21 @@ fit_and_get_f <- function(e) {
 }
 
 # fit models varying the tolerance
-exponent <- c(-1, -1.5, -2, -4, -6, -8, -12, -16)
+exponent <- c(-1, -2, -4, -6, -8, -12, -16)
 conv_df <- 10^exponent %>%
   map(~ fit_and_get_f(.)) %>%
   bind_rows() %>%
   mutate(e_text = paste0("10^", exponent)) %>%
-  write_csv("output/br-convergence-gh.csv") 
+  write_csv("output/br-convergence-gh.csv") %>%
+  glimpse()
+
+conv_long <- conv_df %>%
+  pivot_longer(cols = wald_p:lr_p, names_to = "p_type", values_to = "p_value") %>%
+  filter(exponent <= -2) %>%
+  glimpse()
 
 # plot the lr p-value against the se
-ggplot(conv_df, aes(x = se_hat, y = lr_p)) + 
+ggplot(conv_long, aes(x = se_hat, y = p_value, color = p_type)) + 
   geom_path() + 
   geom_point() + 
   geom_label(aes(label = e_text), parse = TRUE, size = 2) + 
@@ -55,4 +61,16 @@ ggplot(conv_df, aes(x = se_hat, y = lr_p)) +
 # save plots
 ggsave("doc/fig/br-convergence.pdf", height = 3, width = 4, scale = 1.5)
 ggsave("doc/fig/br-convergence-gh.png", height = 3, width = 4, scale = 1.5)
+
+conv_df %>%
+  glimpse()
+linear <- tibble(x = -1:-40) %>%
+  mutate(y = -x)
+ggplot(conv_df, aes(x = b_hat, y = se_hat)) + 
+  scale_x_continuous() + 
+  scale_y_log10(labels = label_comma()) +
+  geom_line(data = linear, aes(x = x, y = y)) + 
+  geom_point() + 
+  geom_label_repel(aes(label = e_text), parse = TRUE, size = 2)
+  
 

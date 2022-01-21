@@ -2,7 +2,6 @@
 # load packages
 library(tidyverse)
 library(broom)
-library(lmtest)
 
 # load data
 br_df <- read_csv("data/politics_and_need_rescale.csv") %>%
@@ -33,51 +32,23 @@ fits[[2]] <- glm(formula = f, family = binomial, data = br_df, epsilon = 1e-300,
 fits[[3]] <- brglm::brglm(formula = f, family = binomial, data = br_df)
 fits[[4]] <- arm::bayesglm(formula = f, family = binomial, data = br_df)
 
+fits_1null <- update(fits[[1]], . ~ . - dem_governor)
+fits_2null <- update(fits[[2]], . ~ . - dem_governor)
+
+
 model_names <- c("ML with Default Precision",
                  "ML with Maximum Precision",
                  "PML with Jeffreys Penalty",
                  "PML with Cauchy Penalty")
 
-# a function to compute lr p-values for all variables in model
-lr_f <- function(fit, term) {
-  p <- ifelse(term == "(Intercept)", 
-              lrtest(fit, . ~ . - 1)[["Pr(>Chisq)"]][2],
-              lrtest(fit, term)[["Pr(>Chisq)"]][2])
-  return(p)
-}
-
-# test function
-lr_f(fits[[1]], "(Intercept)")
-lr_f(fits[[1]], "dem_governor")
-
-# find lr p-value for all terms in ml models
-lr_df <- crossing(model_index = 1:2, term = names(coef(fits[[1]]))) %>% 
-  mutate(row = 1:n()) %>%
-  split(.$row) %>%
-  map(~ mutate(., lr.p.value = lr_f(fits[[.$model_index]], term))) %>%
-  bind_rows() %>%
-  glimpse()
-
 # tidy fits
 tidy_fits_df <- fits %>%
-  map(~ tidy(.x)) %>%
+  map(~ tidy(.x)) %>% 
   imap(~ mutate(.x, model = model_names[.y], model_index = .y)) %>% 
-  bind_rows() %>%
-  left_join(lr_df) %>% 
-  left_join(var_names_df) %>%
+  bind_rows() %>% 
+  left_join(var_names_df) %>% 
   mutate(model = factor(model, levels = rev(model_names)),
          nice_term = reorder(nice_term, plot_order),
-         reject = ifelse(p.value <= 0.1, "Reject Null Hypothesis", "Fail to Reject Null Hypothesis"),
-         lr_reject = ifelse(p.value <= 0.1, "Reject Null Hypothesis", "Fail to Reject Null Hypothesis"),
-         percent_change = (lr.p.value - p.value)/p.value,
-         lr.p.value_plot = ifelse(abs(p.value - lr.p.value) > 0.01, lr.p.value, NA),
-         percent_change_text = ifelse(!is.na(lr.p.value_plot), 
-                                      scales::percent(percent_change, accuracy = 1),
-                                      ""),
-         percent_change_text2 = ifelse(nice_term == "Democratic Governor" & 
-                                         model == "ML with Default Precision", 
-                                       paste0(percent_change_text, " change in p-value"), 
-                                       percent_change_text),
          se_text = scales::number(std.error, 
                                   accuracy = 0.01,
                                   big.mark = ","),
@@ -88,6 +59,25 @@ tidy_fits_df <- fits %>%
                              model == "ML with Default Precision", 
                            paste0("std. error = ", se_text2), 
                            se_text2)) %>%
+  glimpse()
+
+# add likelihood ratio p-values
+tidy_fits_df$lr_p_value <- NA
+tidy_fits_df$lr_p_value[tidy_fits_df$term == "dem_governor" & tidy_fits_df$model == "ML with Default Precision"] <- 
+  anova(fits_1null, fits[[1]], test = "Chisq")[[5]][[2]]
+tidy_fits_df$lr_p_value[tidy_fits_df$term == "dem_governor" & tidy_fits_df$model == "ML with Maximum Precision"] <- 
+  anova(fits_2null, fits[[2]], test = "Chisq")[[5]][[2]]
+
+# add score p-values
+tidy_fits_df$score_p_value <- NA
+tidy_fits_df$score_p_value[tidy_fits_df$term == "dem_governor" & tidy_fits_df$model == "ML with Default Precision"] <- 
+  anova(fits_1null, fits[[1]], test = "Rao")[[6]][[2]]
+tidy_fits_df$score_p_value[tidy_fits_df$term == "dem_governor" & tidy_fits_df$model == "ML with Maximum Precision"] <- 
+  anova(fits_2null, fits[[2]], test = "Rao")[[6]][[2]]
+
+tidy_fits_df %<>% 
+  select(model, term, nice_term, estimate, std_error = std.error, se_text = se_text2,
+         wald_p_value = p.value, lr_p_value, score_p_value, plot_order) %>%
   glimpse()
 
 # write tidy fits to file

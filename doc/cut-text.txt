@@ -1,0 +1,21 @@
+# Bell and Miller (2015)
+
+Bell and Miller (2015) argue against the Rauchhaus' (2009) claim that symmetric nuclear dyads are less likely to fight a war. They do so on several grounds, including that Rauchhaus does not appropriately address the separation is his dataset. Bell and Miller argue for a penalized maximum likelihood estimator, but Rainey (2016) shows that the conclusions depend on the penalty, which he interprets as a Bayesian prior distribution. 
+
+Without choosing among the diverse and subjective prior distributions, we can simply use a likelihood-ratio test with Rauchhaus' original model. While the point estimates for the coefficients remain unreasonably large, we can obtain reasonable p-values for the null hypothesis that symmetric nuclear dyads are less likely to fight a war.
+
+
+
+\renewcommand{\captiontext}{}
+\renewcommand{\notetext}{This table shows the $p$-values from several procedures that researcers might use when dealing with separation in logistic regression models. The Wald test relies on unreasonable standard errors that depend heavily on the precision of the algorithm and, as a consequence, produces unrealistic $p$-values. However, the $p$-values from the likelihood ratio test seem reasonable and resemble the $p$-vales from the more conservative penalized maximum likelihood approaches.}
+\begin{table}[!h]
+\caption{\label{tab:br-p}\captiontext}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{threeparttable}
+\input{doc/tab/bm-fits-s.tex}
+\begin{tablenotes}[para]
+\notetext
+\end{tablenotes}
+\end{threeparttable}
+\end{table}

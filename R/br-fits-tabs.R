@@ -4,23 +4,25 @@ library(tidyverse)
 library(kableExtra)
 
 # load data
-tidy_fits_df <- read_rds("output/br-tidy-fits.rds")
+tidy_fits_df <- read_rds("output/br-tidy-fits.rds") %>%
+  glimpse()
 
 # create table of estimates
-k_df <- tidy_fits_df %>%
+k_df <- tidy_fits_df %>% 
   select(`Variable` = nice_term, 
          `Estimator` = model, 
          `Coef. Est.` = estimate, 
-         `SE Est.` = std.error, 
-         `Wald \\textit{p}-Value` = p.value, 
-         `LR \\textit{p}-Value` = lr.p.value, 
-         `Percent Change` = percent_change_text) %>% 
+         `SE Est.` = std_error, 
+         `Wald \\textit{p}-Value` = wald_p_value, 
+         `LR \\textit{p}-Value` = lr_p_value, 
+         `Score \\textit{p}-Value` = score_p_value) %>% 
   arrange(Variable, desc(Estimator)) %>%
-  mutate(`Percent Change` = str_replace(`Percent Change`, "%", "\\\\%")) %>% 
   mutate_if(is.numeric, ~ case_when(. > 1000000 ~ scales::unit_format(unit = "million", scale = 1e-6, digits = 2)(.),
                                     . > 1000 ~ scales::number(., accuracy = 2, big.mark = ","),
                                     is.na(.) ~ "", 
-                                    TRUE ~ scales::number(., accuracy = 0.01, big.mark = ",")))
+                                    TRUE ~ scales::number(., accuracy = 0.01, big.mark = ","))) %>%
+  glimpse()
+
 k <- k_df %>%
   kable(format = "latex", booktabs = TRUE, align = c(rep("l", 2), rep("c", 5)), escape = FALSE) %>%
   #column_spec(1) %>%
@@ -29,6 +31,9 @@ k <- k_df %>%
 # write table to file
 k %>% cat(file = "doc/tab/br-fits.tex")
 k %>% as_image(file = "doc/tab/br-fits-gh.png")
+
+k_df %>%
+  glimpse
 
 # ks <- k_df %>%
 #   filter(Variable == "Democratic Governor") %>%
@@ -57,7 +62,7 @@ k %>% as_image(file = "doc/tab/br-fits-gh.png")
 
 ks <- k_df %>%
   filter(Variable == "Democratic Governor") %>%
-  select(-Variable, -`Percent Change`) %>% 
+  select(-Variable) %>% 
   kable(format = "latex", 
         booktabs = TRUE,
         align = c(rep("l", 1), rep("c", 5)), 

@@ -1,0 +1,194 @@
+---
+title: "The Computational Companion"
+subtitle: 'to "Meaningful Hypothesis Tests Under Separation (Without Prior Information)"'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Example 1 from the Paper
+
+## Wald test of the logistic regression coefficient
+
+```{r}
+n <- 1000
+x <- c(rep(0, n/2), rep(1, n/2))
+y <- x
+data <- data.frame(x, y)
+
+fit <- glm(y ~ x, data = data, family = binomial)
+arm::display(fit, detail = TRUE, digits = 3)
+
+
+fit_max <- glm(y ~ x, data = data, family = binomial,
+           epsilon = 10^(-100), maxit = 10^10)
+arm::display(fit_max, detail = TRUE, digits = 3)
+```
+
+## Exact test
+
+For the exact test, choose $p = 0.5$ as the null hypothesis to reject because it produces the largest $p$-value. Assuming that $p = 0.5$, then there are two outcomes that are at least as extreme as the observed data: the observed data and also perfect prediction in the opposite direction. Both have probability $\left( \frac{1}{2} \right)^{500} \times \left( \frac{1}{2} \right)^{500}$. Because these are mutual exclusive, simply mulitply them together to obtain the $p$-value $\frac{2}{2^{1000}}$.
+
+## Barrilleaux and Rainey convergence
+
+```{r message=FALSE, warning=FALSE}
+
+# load packages
+library(tidyverse)
+library(ggrepel)
+library(scales)
+
+# set seed
+set.seed(784123)
+
+# load data
+br_df <- read_csv("data/politics_and_need_rescale.csv") %>%
+  mutate(dem_governor = -1*gop_governor)
+
+# create model formula for the model shown in their Figure 2, p. 446
+f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+  bal2012 + multiplier + percent_nonwhite + percent_metro
+
+# a function to compute quantities of interest for each fit
+fit_and_get_f <- function(e) {
+  ml_fit  <- glm(f, data = br_df, family = binomial, epsilon = e, maxit = 10000000)
+  ml0_fit <- update(ml_fit, . ~ . - dem_governor)
+  ll <- as.numeric(logLik(ml_fit))       # log-likelihood of alternative model
+  ll0 <- as.numeric(logLik(ml0_fit))     # log-likelihood of null model
+  test_statistic <- -2*(ll0 - ll)     # wilk's test statistic
+  degrees_of_freedom <- 1             # wilk's degrees-of-freedom
+  lr_p <- 1 - pchisq(test_statistic, df = degrees_of_freedom)  # wilk's p-val
+  res_df <- tibble(
+    e = e, 
+    exponent = log10(e),
+    b_hat = coef(ml_fit)[2],
+    se_hat = sqrt(diag(vcov(ml_fit)))[2],
+    wald_p = 2*pnorm((abs(coef(ml_fit))/sqrt(diag(vcov(ml_fit))))[2], lower.tail = FALSE),
+    lr_p = lr_p)
+  return(res_df)
+}
+
+# fit models varying the tolerance
+exponent <- c(-1, -2, -4, -6, -8, -12, -16)
+conv_df <- 10^exponent %>%
+  map(~ fit_and_get_f(.)) %>%
+  bind_rows() %>%
+  mutate(e_text = paste0("10^", exponent)) %>%
+  write_csv("output/br-convergence-gh.csv") %>%
+  glimpse()
+```
+
+```{r}
+linear <- tibble(x = -1:-40) %>%
+  mutate(y = -x)
+ggplot(conv_df, aes(x = b_hat, y = se_hat)) + 
+  scale_x_continuous() + 
+  scale_y_log10(labels = label_comma()) +
+  geom_line(data = linear, aes(x = x, y = y)) + 
+  geom_point() + 
+  geom_label_repel(aes(label = e_text), parse = TRUE, size = 2)
+```
+
+# Example 1: No Separation
+
+The code below shows how to fit a logistic regression model with the usual maximum likelihood approach and two penalized maximum likelihood approaches and compute p-values using the Wald and likelihood ratio methods.
+
+I begin in a situation without separation.
+
+## Load the Data
+
+```{r message=FALSE, warning=FALSE}
+# load packages
+library(tidyverse)
+library(brglm)
+library(arm)
+# Zelig not loaded, but needed below
+# arm not loaded, but needed below
+
+# load turnout data from from Zelig package
+data(turnout, package = "Zelig")
+
+# quick overview of data
+glimpse(turnout)
+```
+
+## Fit the Models
+
+```{r message=FALSE, warning=FALSE}
+# fit a logistic regression model
+formula <- vote ~ age + race
+ml_fit <- glm(formula, family = binomial, data = turnout)
+pml_fit_jeffreys <- brglm(formula, family = binomial, data = turnout)
+pml_fit_cauchy <- bayesglm(formula, family = binomial, data = turnout)
+
+# combine fits into a list
+fit_list <- list("ML" = ml_fit, 
+                 "PML: Jeffreys" = pml_fit_jeffreys, 
+                 "PML: Cauchy" = pml_fit_cauchy)
+
+# print a summary table of logistic regression fit
+texreg::screenreg(fit_list)
+```
+
+The table above presents Wald p-values using stars.
+
+We can see the exact p-values using `summary()`.
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+summary(ml_fit)
+summary(pml_fit_jeffreys)
+summary(pml_fit_cauchy)
+
+```
+We can use broom's `tidy()` function to get the p-values into a data frame
+
+```{r message=FALSE, warning=FALSE}
+library(broom)
+
+fits <- fit_list %>%
+  map(~ tidy(.)) %>%  # create a data frame of predictor-level info
+  imap(~ mutate(.x, method = .y)) %>%  # add a variable indicating estimation method
+  bind_rows() %>%  # combine the fits into a single data frame
+  glimpse()
+```
+
+We can use this data frame to plot the p-values, for example.
+
+```{r message=FALSE, warning=FALSE}
+ggplot(fits, aes(y = p.value, x = term, color = method)) + 
+  geom_point(position = position_dodge(width = 1/2)) + 
+  coord_flip()
+```
+
+While the Wald test is convenient because it requires fitting just one model, it makes sense to use the likelihood-ratio test in some cases. For example, the likelihood ratio test gives a reasonable result in the case of separation while the Wald test does not.
+
+The code below uses base R function to compute the likelihood ratio tests for the variable `race`. While it's possible to perform a likelihood-ratio test for each variable in the model (and the constant), I've chosen to focus on single variables. The single-variable approach aligns with the logic of the tests (i.e., an unrestricted model versus a restricted model) and clarifies that the test is not the standard Wald test. 
+
+```{r message=FALSE, warning=FALSE}
+# fit the restricted model (omit race variable)
+ml_fit0 <- glm(vote ~ age, family = binomial, data = turnout)
+# or alternatively
+ml_fit0 <- update(ml_fit, . ~ . - race)
+
+# likelihood-ratio test
+anova(ml_fit0, ml_fit, test = "Chisq")
+# or alternatively
+anova(ml_fit0, ml_fit, test = "LRT")
+
+```
+
+For a slightly more convenient syntax, we can use the `lrtest()` function in the lmtest package.
+
+```{r message=FALSE, warning=FALSE}
+library(lmtest)
+lrtest(ml_fit, "race")  # specify name of variable to omit in the restricted model
+```
+
+Alternatively, we can use the `lr.test()` function in the mdscore package, though this requires fitting both models manually.
+
+```{r message=FALSE, warning=FALSE}
+library(mdscore)
+lr.test(ml_fit0, ml_fit)
+```

@@ -1,5 +1,5 @@
 # all phony
-all: Makefile dag br bm_tabs doc
+all: Makefile dag br doc output/summarized-simulations.rds
 	rm -f Rplots.pdf
 
 # phonies for components
@@ -8,14 +8,16 @@ all: Makefile dag br bm_tabs doc
 # manuscript
 doc: doc/wilks.pdf
 
+# simulations 
+sims: output/summarized-simulations.rds
+
 # barrilleaux and rainey re-analysis
-br: br_conv br_plots br_tabs
+br: br_conv br_tabs
 br_conv: doc/fig/br-convergence.pdf doc/fig/br-convergence-gh.png output/br-convergence-gh.csv
-br_plots: doc/fig/br-fits.pdf doc/fig/br-fits-gh.png 
 br_tabs: doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits-s-gh.png
 
 # bell and miller re-analysis
-bm_tabs: doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png
+# bm_tabs: doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png
 
 # dag for makefile
 dag: makefile-dag.png
@@ -36,10 +38,6 @@ doc/fig/br-convergence.pdf doc/fig/br-convergence-gh.png output/br-convergence-g
 # br fits
 output/br-tidy-fits.rds: R/br-fits.R data/politics_and_need_rescale.csv
 	Rscript $<
-
-# br plots
-doc/fig/br-fits.pdf doc/fig/br-fits-gh.png: R/br-fits-plots.R output/br-tidy-fits.rds
-	Rscript $<
 	
 # br tables	
 doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits-s-gh.png: R/br-fits-tabs.R output/br-tidy-fits.rds
@@ -49,17 +47,30 @@ doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits
 # ---------------
 
 # bm fits
-output/bm-tidy-fits.rds: R/bm-fits.R data/bm.csv
-	Rscript $<
+#output/bm-tidy-fits.rds: R/bm-fits.R data/bm.csv
+#	Rscript $<
+
+# bm tables
+#doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png: R/bm-fits-tabs.R output/bm-tidy-fits.rds
+#	Rscript $<
+	
+# simulations
+# -----------
+
+# do simulations
+output/summarized-simulations.rds: R/sims-helpers.R R/sims-do.R R/sims-combine.R
+	Rscript R/sims-do.R
+	Rscript R/sims-combine.R
 
 # bm tables
 doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png: R/bm-fits-tabs.R output/bm-tidy-fits.rds
-	Rscript $<
+	Rscript $<	
 	
 # manuscript
 # ----------
 	
-doc/wilks.pdf: doc/wilks.md doc/options.sty doc/tab/br-fits-s.tex doc/tab/bm-fits-s.tex
+doc/wilks.pdf: doc/wilks.md doc/options.sty doc/misc/count-document-words.R
+	Rscript doc/misc/count-document-words.R
 	pandoc -H doc/options.sty -V fontsize=12pt $< -o $@ --bibliography=doc/bib/bibliography.bib --csl doc/bib/apsr.csl
 	open doc/wilks.pdf
 
@@ -73,6 +84,8 @@ clean: cleandoc
 	rm -f makefile-dag.png
 	rm -f doc/fig/*
 	rm -f doc/tab/*
-	rm -f output/*
+	rm -rf output/* 
+	rm -f progress.txt simulation-progress.log
+	mkdir output/scenario-sims/
 
 	
