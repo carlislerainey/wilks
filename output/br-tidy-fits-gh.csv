@@ -1,37 +1,37 @@
-term,estimate,std.error,statistic,p.value,model,model_index,row,lr.p.value,nice_term,plot_order,reject,lr_reject,percent_change,lr.p.value_plot,percent_change_text,percent_change_text2,se_text,se_text2,se_text3
-(Intercept),11.494098547045343,1934.6399418341266,0.0059412081279312445,0.995259629649786,ML with Default Precision,1,1,0.09497527304995698,Constant,9,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.9045723646166809,0.09497527304995698,-90%,-90%,"1,934.64","1,934","1,934"
-dem_governor,-20.34924245450438,3224.399787708778,-0.006311017179716515,0.9949645702553345,ML with Default Precision,1,3,0.002945853204525776,Democratic Governor,1,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.99703923808687,0.002945853204525776,-100%,-100% change in p-value,"3,224.40","3,224","std. error = 3,224"
-percent_favorable_aca,0.12754769959321052,1.5491973832952628,0.08233147110144654,0.9343831290442193,ML with Default Precision,1,6,0.9343320121046698,Percent Favorable to ACA,3,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-5.470661654796678e-5,NA,,,1.55,1.55,1.55
-gop_leg,2.429382928050744,1.4796488447971232,1.6418645117003017,0.10061808592504472,ML with Default Precision,1,4,0.06283023127237794,GOP Legislature,4,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.37555727983949905,0.06283023127237794,-38%,-38%,1.48,1.48,1.48
-percent_uninsured,0.9230314526417525,2.2342416014745474,0.41312965080973035,0.6795116265391692,ML with Default Precision,1,9,0.677801393799507,Percent Without Health Insurance,2,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.002516855742958528,NA,,,2.23,2.23,2.23
-bal2012,-0.05353411979715634,0.8535308835133627,-0.06272077651929302,0.9499888526951161,ML with Default Precision,1,2,0.950431449223186,Fiscal Health,5,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,4.658965490113254e-4,NA,,,0.85,0.85,0.85
-multiplier,-0.3547433296230771,1.1926020100494412,-0.29745323807425966,0.7661205037486685,ML with Default Precision,1,5,0.76581717598252,Medicaid Multiplier,6,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-3.9592696535897283e-4,NA,,,1.19,1.19,1.19
-percent_nonwhite,1.433561269041631,2.6158787151679466,0.5480228348238204,0.5836762236013229,ML with Default Precision,1,8,0.580658388811463,Percent Non-White,7,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.0051703918505358855,NA,,,2.62,2.62,2.62
-percent_metro,-2.7589313725935267,1.6866589037242439,-1.6357375913420555,0.10189451842319949,ML with Default Precision,1,7,0.055583349913320465,Percent Metropolitan,8,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.4545010784342137,0.055583349913320465,-45%,-45%,1.69,1.69,1.69
-(Intercept),20.41838128248565,9003598.90780741,2.267802185721533e-6,0.9999981905556491,ML with Maximum Precision,2,10,0.09497526885519023,Constant,9,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.9050245592920351,0.09497526885519023,-91%,-91%,"9,003,598.91",9 million,9 million
-dem_governor,-35.22304701357155,15005998.179678889,-2.347264513284466e-6,0.9999981271538847,ML with Maximum Precision,2,12,0.002945853090298518,Democratic Governor,1,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.9970541413925617,0.002945853090298518,-100%,-100%,"15,005,998.18",15 million,15 million
-percent_favorable_aca,0.12754769959321455,1.5491974203282433,0.08233146913334635,0.934383130609223,ML with Maximum Precision,2,15,0.9343320082423473,Percent Favorable to ACA,3,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-5.4712424915380755e-5,NA,,,1.55,1.55,1.55
-gop_leg,2.429382928050751,1.4796488582478737,1.641864496774934,0.10061808901887968,ML with Maximum Precision,2,13,0.06283023465132152,GOP Legislature,4,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.37555726545817975,0.06283023465132152,-38%,-38%,1.48,1.48,1.48
-percent_uninsured,0.9230314526417462,2.2342418839673863,0.4131295985744845,0.6795116648077064,ML with Maximum Precision,2,18,0.6778014938135318,Percent Without Health Insurance,2,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.002516764733771781,NA,,,2.23,2.23,2.23
-bal2012,-0.05353411979715666,0.8535308858074515,-0.0627207763507148,0.9499888528293579,ML with Maximum Precision,2,11,0.9504314482534856,Fiscal Health,5,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,4.658953868874758e-4,NA,,,0.85,0.85,0.85
-multiplier,-0.354743329623074,1.1926020147784682,-0.2974532368947652,0.7661205046490428,ML with Maximum Precision,2,14,0.7658171780607063,Medicaid Multiplier,6,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-3.9592542752199495e-4,NA,,,1.19,1.19,1.19
-percent_nonwhite,1.4335612690416373,2.6158790248806336,0.5480227699394672,0.5836762681530382,ML with Maximum Precision,2,17,0.5806583921220734,Percent Non-White,7,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.005170462113380869,NA,,,2.62,2.62,2.62
-percent_metro,-2.7589313725935343,1.6866589397498597,-1.6357375564040815,0.1018945257384718,ML with Maximum Precision,2,16,0.05558335253203322,Percent Metropolitan,8,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,-0.4545010918967662,0.05558335253203322,-45%,-45%,1.69,1.69,1.69
-(Intercept),1.1809486041984698,1.1501287188551963,1.026796900936402,0.30451610897416614,PML with Jeffreys Penalty,3,NA,NA,Constant,9,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.15,1.15,1.15
-dem_governor,-2.676625113497061,1.4208415645794337,-1.8838308086020392,0.05958786479389387,PML with Jeffreys Penalty,3,NA,NA,Democratic Governor,1,Reject Null Hypothesis,Reject Null Hypothesis,NA,NA,,,1.42,1.42,1.42
-percent_favorable_aca,-0.13840770306579978,1.3132697167801455,-0.1053916810060508,0.9160650168980836,PML with Jeffreys Penalty,3,NA,NA,Percent Favorable to ACA,3,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.31,1.31,1.31
-gop_leg,1.6181681674956574,1.1737354037340935,1.3786481709145488,0.1680032567255508,PML with Jeffreys Penalty,3,NA,NA,GOP Legislature,4,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.17,1.17,1.17
-percent_uninsured,0.18014039633123693,1.1271333794382696,0.15982172085171822,0.8730215132514402,PML with Jeffreys Penalty,3,NA,NA,Percent Without Health Insurance,2,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.13,1.13,1.13
-bal2012,-0.12313310600358407,0.725211835233301,-0.16978915679716133,0.8651759547333377,PML with Jeffreys Penalty,3,NA,NA,Fiscal Health,5,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,0.73,0.73,0.73
-multiplier,-0.3264973483689592,1.0181463395361088,-0.3206782126405513,0.7484542597906927,PML with Jeffreys Penalty,3,NA,NA,Medicaid Multiplier,6,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.02,1.02,1.02
-percent_nonwhite,1.562025616416188,1.207794774215729,1.2932872784041278,0.19591171891122924,PML with Jeffreys Penalty,3,NA,NA,Percent Non-White,7,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.21,1.21,1.21
-percent_metro,-1.81958453014384,1.1878872808252328,-1.531782147612325,0.1255762029025987,PML with Jeffreys Penalty,3,NA,NA,Percent Metropolitan,8,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.19,1.19,1.19
-(Intercept),1.4660197178154344,1.1912527155207357,1.2306538308075032,0.21845236272496865,PML with Cauchy Penalty,4,NA,NA,Constant,9,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.19,1.19,1.19
-dem_governor,-3.3787649794175505,1.6304315317511267,-2.0723133192773004,0.03823623108846806,PML with Cauchy Penalty,4,NA,NA,Democratic Governor,1,Reject Null Hypothesis,Reject Null Hypothesis,NA,NA,,,1.63,1.63,1.63
-percent_favorable_aca,-0.20850685452478407,1.0350691009922346,-0.20144244893882535,0.8403526259846419,PML with Cauchy Penalty,4,NA,NA,Percent Favorable to ACA,3,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.04,1.04,1.04
-gop_leg,1.695515325625655,1.060784630560984,1.5983596262410031,0.10996296445660697,PML with Cauchy Penalty,4,NA,NA,GOP Legislature,4,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.06,1.06,1.06
-percent_uninsured,0.5997213945752278,1.0778763050029916,0.5563916673848427,0.5779431339549257,PML with Cauchy Penalty,4,NA,NA,Percent Without Health Insurance,2,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.08,1.08,1.08
-bal2012,0.1547593971365891,0.7507666491144572,0.20613515174006541,0.8366853412385555,PML with Cauchy Penalty,4,NA,NA,Fiscal Health,5,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,0.75,0.75,0.75
-multiplier,-0.16239316523164082,0.8766207735417296,-0.18524904968375183,0.8530336987221668,PML with Cauchy Penalty,4,NA,NA,Medicaid Multiplier,6,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,0.88,0.88,0.88
-percent_nonwhite,0.9340541020946895,1.2448906591800226,0.7503101539133782,0.4530679285749893,PML with Cauchy Penalty,4,NA,NA,Percent Non-White,7,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.24,1.24,1.24
-percent_metro,-1.459451751546038,1.0438992424367797,-1.3980772206896441,0.16208987953036655,PML with Cauchy Penalty,4,NA,NA,Percent Metropolitan,8,Fail to Reject Null Hypothesis,Fail to Reject Null Hypothesis,NA,NA,,,1.04,1.04,1.04
+model,term,nice_term,estimate,std_error,se_text,wald_p_value,lr_p_value,score_p_value,plot_order
+ML with Default Precision,(Intercept),Constant,11.494098547045343,1934.6399418341266,"1,934",0.995259629649786,NA,NA,9
+ML with Default Precision,dem_governor,Democratic Governor,-20.34924245450438,3224.399787708778,"3,224",0.9949645702553345,0.002945853204525792,0.00903666481359792,1
+ML with Default Precision,percent_favorable_aca,Percent Favorable to ACA,0.12754769959321052,1.5491973832952628,1.55,0.9343831290442193,NA,NA,3
+ML with Default Precision,gop_leg,GOP Legislature,2.429382928050744,1.4796488447971232,1.48,0.10061808592504472,NA,NA,4
+ML with Default Precision,percent_uninsured,Percent Without Health Insurance,0.9230314526417525,2.2342416014745474,2.23,0.6795116265391692,NA,NA,2
+ML with Default Precision,bal2012,Fiscal Health,-0.05353411979715634,0.8535308835133627,0.85,0.9499888526951161,NA,NA,5
+ML with Default Precision,multiplier,Medicaid Multiplier,-0.3547433296230771,1.1926020100494412,1.19,0.7661205037486685,NA,NA,6
+ML with Default Precision,percent_nonwhite,Percent Non-White,1.433561269041631,2.6158787151679466,2.62,0.5836762236013229,NA,NA,7
+ML with Default Precision,percent_metro,Percent Metropolitan,-2.7589313725935267,1.6866589037242439,1.69,0.10189451842319949,NA,NA,8
+ML with Maximum Precision,(Intercept),Constant,20.41838128248565,9003598.90780741,9 million,0.9999981905556491,NA,NA,9
+ML with Maximum Precision,dem_governor,Democratic Governor,-35.22304701357155,15005998.179678889,15 million,0.9999981271538847,0.002945853090298518,0.00903671857530161,1
+ML with Maximum Precision,percent_favorable_aca,Percent Favorable to ACA,0.12754769959321455,1.5491974203282433,1.55,0.934383130609223,NA,NA,3
+ML with Maximum Precision,gop_leg,GOP Legislature,2.429382928050751,1.4796488582478737,1.48,0.10061808901887968,NA,NA,4
+ML with Maximum Precision,percent_uninsured,Percent Without Health Insurance,0.9230314526417462,2.2342418839673863,2.23,0.6795116648077064,NA,NA,2
+ML with Maximum Precision,bal2012,Fiscal Health,-0.05353411979715666,0.8535308858074515,0.85,0.9499888528293579,NA,NA,5
+ML with Maximum Precision,multiplier,Medicaid Multiplier,-0.354743329623074,1.1926020147784682,1.19,0.7661205046490428,NA,NA,6
+ML with Maximum Precision,percent_nonwhite,Percent Non-White,1.4335612690416373,2.6158790248806336,2.62,0.5836762681530382,NA,NA,7
+ML with Maximum Precision,percent_metro,Percent Metropolitan,-2.7589313725935343,1.6866589397498597,1.69,0.1018945257384718,NA,NA,8
+PML with Jeffreys Penalty,(Intercept),Constant,1.1809486041984698,1.1501287188551963,1.15,0.30451610897416614,NA,NA,9
+PML with Jeffreys Penalty,dem_governor,Democratic Governor,-2.676625113497061,1.4208415645794337,1.42,0.05958786479389387,NA,NA,1
+PML with Jeffreys Penalty,percent_favorable_aca,Percent Favorable to ACA,-0.13840770306579978,1.3132697167801455,1.31,0.9160650168980836,NA,NA,3
+PML with Jeffreys Penalty,gop_leg,GOP Legislature,1.6181681674956574,1.1737354037340935,1.17,0.1680032567255508,NA,NA,4
+PML with Jeffreys Penalty,percent_uninsured,Percent Without Health Insurance,0.18014039633123693,1.1271333794382696,1.13,0.8730215132514402,NA,NA,2
+PML with Jeffreys Penalty,bal2012,Fiscal Health,-0.12313310600358407,0.725211835233301,0.73,0.8651759547333377,NA,NA,5
+PML with Jeffreys Penalty,multiplier,Medicaid Multiplier,-0.3264973483689592,1.0181463395361088,1.02,0.7484542597906927,NA,NA,6
+PML with Jeffreys Penalty,percent_nonwhite,Percent Non-White,1.562025616416188,1.207794774215729,1.21,0.19591171891122924,NA,NA,7
+PML with Jeffreys Penalty,percent_metro,Percent Metropolitan,-1.81958453014384,1.1878872808252328,1.19,0.1255762029025987,NA,NA,8
+PML with Cauchy Penalty,(Intercept),Constant,1.4660197178154344,1.1912527155207357,1.19,0.21845236272496865,NA,NA,9
+PML with Cauchy Penalty,dem_governor,Democratic Governor,-3.3787649794175505,1.6304315317511267,1.63,0.03823623108846806,NA,NA,1
+PML with Cauchy Penalty,percent_favorable_aca,Percent Favorable to ACA,-0.20850685452478407,1.0350691009922346,1.04,0.8403526259846419,NA,NA,3
+PML with Cauchy Penalty,gop_leg,GOP Legislature,1.695515325625655,1.060784630560984,1.06,0.10996296445660697,NA,NA,4
+PML with Cauchy Penalty,percent_uninsured,Percent Without Health Insurance,0.5997213945752278,1.0778763050029916,1.08,0.5779431339549257,NA,NA,2
+PML with Cauchy Penalty,bal2012,Fiscal Health,0.1547593971365891,0.7507666491144572,0.75,0.8366853412385555,NA,NA,5
+PML with Cauchy Penalty,multiplier,Medicaid Multiplier,-0.16239316523164082,0.8766207735417296,0.88,0.8530336987221668,NA,NA,6
+PML with Cauchy Penalty,percent_nonwhite,Percent Non-White,0.9340541020946895,1.2448906591800226,1.24,0.4530679285749893,NA,NA,7
+PML with Cauchy Penalty,percent_metro,Percent Metropolitan,-1.459451751546038,1.0438992424367797,1.04,0.16208987953036655,NA,NA,8

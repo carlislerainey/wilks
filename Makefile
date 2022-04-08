@@ -12,12 +12,7 @@ doc: doc/wilks.pdf
 sims: output/summarized-simulations.rds
 
 # barrilleaux and rainey re-analysis
-br: br_conv br_tabs
-br_conv: doc/fig/br-convergence.pdf doc/fig/br-convergence-gh.png output/br-convergence-gh.csv
-br_tabs: doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits-s-gh.png
-
-# bell and miller re-analysis
-# bm_tabs: doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png
+br: doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits-s-gh.png
 
 # dag for makefile
 dag: makefile-dag.png
@@ -30,10 +25,6 @@ makefile-dag.png: makefile-dag.R Makefile
 
 # barrilleaux and rainey
 # ----------------------
-
-# br convergence plot
-doc/fig/br-convergence.pdf doc/fig/br-convergence-gh.png output/br-convergence-gh.csv: R/br-convergence.R data/politics_and_need_rescale.csv
-	Rscript $<
 	
 # br fits
 output/br-tidy-fits.rds: R/br-fits.R data/politics_and_need_rescale.csv
@@ -43,17 +34,6 @@ output/br-tidy-fits.rds: R/br-fits.R data/politics_and_need_rescale.csv
 doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits-s-gh.png: R/br-fits-tabs.R output/br-tidy-fits.rds
 	Rscript $<
 	
-# bell and miller
-# ---------------
-
-# bm fits
-#output/bm-tidy-fits.rds: R/bm-fits.R data/bm.csv
-#	Rscript $<
-
-# bm tables
-#doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png: R/bm-fits-tabs.R output/bm-tidy-fits.rds
-#	Rscript $<
-	
 # simulations
 # -----------
 
@@ -61,15 +41,11 @@ doc/tab/br-fits.tex doc/tab/br-fits-gh.png doc/tab/br-fits-s.tex doc/tab/br-fits
 output/summarized-simulations.rds: R/sims-helpers.R R/sims-do.R R/sims-combine.R
 	Rscript R/sims-do.R
 	Rscript R/sims-combine.R
-
-# bm tables
-doc/tab/bm-fits.tex doc/tab/bm-fits-gh.png doc/tab/bm-fits-s.tex doc/tab/bm-fits-s-gh.png: R/bm-fits-tabs.R output/bm-tidy-fits.rds
-	Rscript $<	
 	
 # manuscript
 # ----------
 	
-doc/wilks.pdf: doc/wilks.md doc/options.sty doc/misc/count-document-words.R
+doc/wilks.pdf: doc/wilks.md doc/options.sty doc/misc/count-document-words.R doc/tab/single-sim.tex
 	Rscript doc/misc/count-document-words.R
 	pandoc -H doc/options.sty -V fontsize=12pt $< -o $@ --bibliography=doc/bib/bibliography.bib --csl doc/bib/apsr.csl
 	open doc/wilks.pdf

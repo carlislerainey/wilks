@@ -5,8 +5,14 @@
 .Rhistory
 .Rapp.history
 
+# others
+-old/*
+output/*
+progress*
+
 # Session Data files
 .RData
+Rplots.pdf
 
 # User-specific files
 .Ruserdata

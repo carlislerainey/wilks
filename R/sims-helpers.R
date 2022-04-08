@@ -38,7 +38,7 @@ expand_b_x <- function(b_x = c(1, 2, 4, 7, 10)) {
     tibble(b_x = .)
 }
 
-expand_b_x()
+as.numeric(as.matrix(expand_b_x()))
 
 # compute probability of an event
 compute_pr_y <- function(b_cons, b_x, design_matrix) {
@@ -204,7 +204,7 @@ simulate_p <- function(sims_info, scenario_index, simulation_index) {
   # }
   # check calculations using mdscore package
   p_df <- compute_wald(ml_fit) %>%
-    bind_rows(compute_pwald(ml_fit, cdf)) %>%
+    #bind_rows(compute_pwald(ml_fit, cdf)) %>%
     bind_rows(compute_lr(ml_fit, ml0_fit)) %>%
     bind_rows(compute_score(ml_fit, ml0_fit, cdf)) %>%
     mutate(events = sum(cdf$y),
