@@ -46,7 +46,8 @@ ll_data <- tibble(x = seq(limits[1], limits[2], length.out = 1000)) %>%
 base <- ggplot(ll_data, aes(x = x, y = ll)) + 
   geom_line() + 
   labs(x = "Parameter", 
-       y = "Log-Likelihood Function") + 
+       y = "Log-Likelihood Function", 
+       title = "An Example Log-Likelihood Function Without Separation") + 
   scale_x_continuous(limits = limits, breaks = c(null_x, mle_x), 
                      labels = c("Null Hypothesis", "ML Estimate"), 
                      minor_breaks = NULL) + 
@@ -96,7 +97,8 @@ ll_data <- tibble(x = seq(limits[1], limits[2], length.out = 1000)) %>%
 base <- ggplot(ll_data, aes(x = x, y = ll)) + 
   geom_line() + 
   labs(x = "Parameter", 
-       y = "Log-Likelihood Function") + 
+       y = "Log-Likelihood Function", 
+       title = "And With Separation") + 
   scale_x_continuous(limits = limits, breaks = c(null_x, mle_x), 
                      labels = c("Null Hypothesis", "ML Estimate"), 
                      minor_breaks = NULL) + 
@@ -126,7 +128,7 @@ gg_sep <- base +
 
 gg_no_sep + gg_sep 
 
-ggsave("doc/fig/intuition.pdf", height = 2.1, width = 6,scale = 1.5)
+ggsave("doc/fig/intuition.pdf", height = 2.1, width = 6,scale = 1.8)
   
   
   

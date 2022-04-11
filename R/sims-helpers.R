@@ -31,7 +31,7 @@ create_design_matrix <- function(df) {
 }
 
 # create function to expand b_x to include 0 and negatives
-expand_b_x <- function(b_x = c(1, 2, 4, 7, 10)) {  
+expand_b_x <- function(b_x = c(0.25, 0.5, 1, 2, 4, 7, 10)) {  
   c(-b_x, 0, b_x) %>%
     unique() %>%
     sort() %>%

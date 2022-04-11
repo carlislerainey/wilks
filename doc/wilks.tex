@@ -36,7 +36,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={Hypothesis Tests With Separation},
+  pdftitle={Hypothesis Tests Under Separation},
   pdfauthor={Carlisle Rainey},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
@@ -63,7 +63,7 @@
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
-\title{Hypothesis Tests With Separation}
+\title{Hypothesis Tests Under Separation}
 \author{Carlisle Rainey\footnote{Carlisle Rainey is Associate Professor
   of Political Science, Florida State University, 540 Bellamy,
   Tallahassee, FL, 32306.
@@ -82,7 +82,7 @@ Draft under development. It's no doubt filled with typos and errors. This is the
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \begin{center}
-Word Count: input{doc/misc/word-count}
+Word Count: \input{doc/misc/word-count} 
 \end{center}
 
 Separation commonly occurs in political science, usually when the
@@ -113,13 +113,12 @@ depends on the substantive application, so context-free defaults (like
 Jeffreys' and Cauchy priors) might not produce reasonable results.
 @Rainey2016 concludes that ``{[}w{]}hen facing separation, researchers
 must \emph{carefully} choose a prior distribution to nearly rule out
-implausibly large effects'' (p.~354).
-
-But it's not always easy to include prior information, and some scholars
-prefer to avoid injecting prior information into their model. How can
-researchers proceed in these situations? In particular, can they obtain
-useful \(p\)-values to test hypotheses in the usual frequentist
-framework without using prior information?
+implausibly large effects'' (p.~354). But it's not always easy to
+include prior information, and some scholars prefer to avoid injecting
+prior information into their model. How can researchers proceed in these
+situations? In particular, can they obtain useful \(p\)-values to test
+hypotheses in the usual frequentist framework without using prior
+information?
 
 Below, I show that while the popular Wald test produces misleading (even
 nonsensical) \(p\)-values under separation, likelihood ratio tests and
@@ -127,16 +126,15 @@ score tests behave in the usual manner. As such, researchers can produce
 meaningful \(p\)-values to test hypotheses with standard frequentist
 tools under separation \emph{without the use of prior information}.
 
-\hypertarget{statistial-theory}{%
-\section{Statistial Theory}\label{statistial-theory}}
-
-\hypertarget{point-estimates}{%
-\subsection{Point Estimates}\label{point-estimates}}
+\hypertarget{hypothesis-tests-under-separation}{%
+\section{Hypothesis Tests Under
+Separation}\label{hypothesis-tests-under-separation}}
 
 Maximum likelihood provides a general and powerful framework for
-obtaining estimates of model parameters. In our case of logistic
-regression, we write the probability \(\pi_i\) that an event occurs for
-observation \(i\) (or that the outcome variable \(y_i = 1\)) as
+obtaining estimates of model parameters and testing hypotheses. In our
+case of logistic regression, we write the probability \(\pi_i\) that an
+event occurs for observation \(i\) (or that the outcome variable
+\(y_i = 1\)) as
 
 \begin{equation}
 \pi_i = \text{logit}^{-1}(X_i\beta)\text{ for } i = 1, 2, ... , n \text{, }
@@ -156,57 +154,36 @@ L(\beta | y) = \pi_{i}^{y_i}(1 - \pi_{i})^{(1 - y_i)}\text{,  where } \pi_i = \t
 \ell(\beta | y) = \log L(\beta | y) = y_i \log(\pi_{i}) + (1 - y_i) \log(1 - \pi_{i}).
 \end{equation}
 
-For logistic regression (and many other models), researchers typically
-use numerical algorithms to locate the value \(\hat{\beta}^{ML}\) of
-\(\beta\) that maximizes \(\ell\). For examples, Stata's \texttt{logit}
-command used a modified Newton-Raphson algorithm
-(\href{https://www.stata.com/help.cgi?maximize\#GPP2010}{link}) and R's
-\texttt{glm()} function uses iteratively reweighted least squares. Then,
-to test hypotheses, we rely on certain features of \(\ell\), depending
-on the test.
-
-\hypertarget{hypothesis-tests}{%
-\subsection{Hypothesis Tests}\label{hypothesis-tests}}
-
-With the point estimates in hand, researchers typically compare their
-research hypothesis \(H_R\) to a null hypothesis \(H_0\). For a logistic
-regression, the researcher might compose a null hypothesis as
-\(H_0: \beta \in B_0 \subset R^n\), which leaves the research hypothesis
-as \(H_R: \beta \in B_0^C\). Depending on the data, the researcher may
-then choose to reject \(H_0\) in favor of \(H_R\) or fail to distinguish
-between the two.
-
-To fix ideas, I focus on the simple point null hypothesis
+\noindent Researchers typically use numerical algorithms to locate the
+ML estimate \(\hat{\beta}^{ML}\), which maximizes \(\ell\). Then
+researchers rely on certain features of \(\ell\) to test hypotheses. To
+fix ideas, I focus on the simple point null hypothesis
 \(H_0: \beta_s = 0\). However, the intuition and conclusions generalize
 to more complex hypotheses.
 
 The literature offers three common methods to assess the null
 hypothesis---the ``holy trinity'' of hypothesis tests: the Wald test,
 the likelihood ratio test, and the score test. For practical reasons,
-most regression tables in political science include \(p\)-values and
-stars based on the Wald test. While usually the most convenient of the
-three tests, the Wald test is uniquely ill-suited for testing hypotheses
-under separation. The likelihood ratio and score tests, on the other
-hand, work as expected. Below I briefly describe each test, explain why
-the Wald test works poorly under separation, and describe why the
-likelihood ratio and score tests perform better.
+most regression tables in political science include \(p\)-values based
+on the Wald test. While usually the most convenient of the three tests,
+the Wald test is uniquely ill-suited for testing hypotheses under
+separation. The likelihood ratio and score tests, on the other hand,
+work as expected. Below I briefly describe each test, explain why the
+Wald test works poorly under separation, and describe why the likelihood
+ratio and score tests perform better.
 
 \hypertarget{wald-test}{%
-\subsubsection{Wald Test}\label{wald-test}}
+\subsection{Wald Test}\label{wald-test}}
 
 Of the three methods, researchers usually report the Wald test because
 it requires fitting only the full model. The Wald procedure uses the
 shape of the log-likelihood function around the maximum to estimate the
 precision of the point estimate. If small changes in the parameter near
 the maximum lead to large changes in the log-likelihood function, then
-we can treat the maximum likelihood estimate as precise. However, if
-large changes in the parameter lead to small changes in the likelihood
-function, then we must treat the maximum likelihood estimate as
-imprecise.
-
-More formally, the Wald test uses the second derivative to quantify the
-curvature of \(\ell\) at \(\hat{\beta}^{ML}\). Further, we can estimate
-the standard error \(\widehat{\text{SE}}(\hat{\beta}_i^{ML})\) as
+we can treat the maximum likelihood estimate as precise. The Wald test
+uses the second derivative to quantify the curvature of \(\ell\) at
+\(\hat{\beta}^{ML}\). We can estimate the standard error
+\(\widehat{\text{SE}}(\hat{\beta}_i^{ML})\) as
 
 \begin{equation}\label{eqn:ml-se}
 \widehat{\text{SE}} \left( \hat{\beta}_i^{ML} \right) = \left( - \dfrac{\partial^2 \ell(\hat{\beta}_i^{ML} | y)}{\partial^2 \hat{\beta}_i^{ML}} \right)^{-\frac{1}{2}}\text{.}
@@ -218,23 +195,27 @@ standard deviation of \(\widehat{\text{SE}}(\hat{\beta}_i^{ML})\). Wald
 (1943) advises us how compare the estimate with the standard error: the
 statistic
 \(Z_w = \dfrac{\hat{\beta}_i^{ML}}{\widehat{\text{SE}}(\hat{\beta}_i^{ML})}\)
-follows a standard normal distribution approximate follows a standard
-normal distribution. (Casella and Berger 2003, pp.~???, Greene 2012,
-pp.~527-529).
+approximately follows a standard normal distribution. (Casella and
+Berger 2003, pp.~492-493, Greene 2012, pp.~527-529).
 
 However, \emph{this approach works poorly when dealing with separation}.
-Under separation, the log-likelihood function at the found maximum is
-numerically flat or nearly so. The flatness produces very large standard
-error estimates, which has a troubling dependence on the error tolerance
-of the algorithm.
+Under separation, the log-likelihood function at the numerical maximum
+is nearly. The flatness produces very large standard error estimates.
 
 For a logistic regression model with a separating variable, we can state
 a precise result that relates the size of the coefficient of the
-separating variable to the Wald estimate of its standard error.
-
-\begin{theorem}\label{thm:growth}
-Suppose that a binary explanatory variable $s$ with coefficient $\beta_s$ perfectly predicts the outcome $y_i$ such that when $s_i = 1$ then $y_i = 1$. Then the log-likelihood function increases in $\beta_s$ and the quantity $\lim_{\beta_s \to \infty} \left[ \left( - \dfrac{\partial^2 \ell(\beta_s | y)}{\partial^2 \beta_s} \right)^{-\frac{1}{2}} - \beta_s \right] = \infty$. Thus, under separation, the estimated standard error will be much larger than the coefficient for the separating variable for any algorithm that obtains a sufficiently large coefficient.
-\end{theorem}
+separating variable to the Wald estimate of its standard error. Suppose
+that a binary explanatory variable \(s\) with coefficient \(\beta_s\)
+perfectly predicts the outcome \(y_i\) such that when \(s_i = 1\) then
+\(y_i = 1\). Then the log-likelihood function increases in \(\beta_s\).
+The estimated standard error
+\(\dfrac{\partial^2 \ell(\beta_s | y)}{\partial^2 \beta_s} \right)^{-\frac{1}{2}}\)
+increases as well. But, critically, the estimated standard error
+increases \emph{faster} than the the associated coefficient, because
+\(\lim_{\beta_s \to \infty} \left[ \left( - \dfrac{\partial^2 \ell(\beta_s | y)}{\partial^2 \beta_s} \right)^{-\frac{1}{2}} - \beta_s \right] = \infty\).
+Thus, under separation, the estimated standard error will be much larger
+than the coefficient for the separating variable for any algorithm that
+obtains a sufficiently large coefficient.
 
 \noindent Theorem \ref{thm:growth} shows that, so long as the researcher
 uses a sufficiently precise algorithm, the Wald test will \emph{never}
@@ -502,7 +483,7 @@ The Number of Control Variables $k$ & 2, 6 \\
 
 Figure \ref{fig:many-sims} shows the statistical power of each of the
 three tests as the chance of separation varies. Most starkly, the power
-of the Wald test is bounded above my the chance of separation.
+of the Wald test is bounded above my the chance of no-separation.
 Intuitively, as the coefficient of the potential separating variable
 increases, the power of the test should \emph{increase}. But because a
 large coefficient makes separation more likely, a large coefficient
@@ -514,12 +495,42 @@ test behave as expected.
 \caption{caption here}\label{fig:many-sims}
 \end{figure}
 
-Figure \ref{fig:power-funs}
+Figure \ref{fig:power-funs} plots and summarized the power function for
+each of the 110 DGPs in the diverse collection.\footnote{I exclude
+  parameter combinations that might not produce variation in the outcome
+  variable, so I do not compute the power function across the entire
+  range of the coefficient for every power function. For 47 of the 110
+  DGPs, I exclude a portion of the range. For 63 of the 110, I compute
+  the power function across the entire range from -10 to 10.} The fine
+lines show the power function for each DGP and the color of the points
+indicates the chance of separation at that point. The heavy, solid lines
+show the average of the collection of power functions. The heavy, dashed
+lines show the power functions for the other two tests, for comparison.
+First, the Wald test power functions show it poor properties. For most
+of the power functions, as the true coefficients grows larger in
+magnitude from about three, the test becomes less powerful. This occurs
+because separation becomes more likely and the test cannot reject the
+null hypothesis when separation occurs. Second, the likelihood ratio and
+score test behave reasonably well. Most importantly, the size of the
+likelihood ratio and score tests is about 5\% when the coefficient
+equals zero and grows as the coefficient moves away from zero. The
+likelihood ratio test is slightly preferred, at least of this collection
+of DGPs, because it is slightly more powerful when the coefficient does
+not equal zero, especially for large, negative coefficients.\footnote{This
+  asymmetry occurs because I only consider negative intercepts.}
 
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{doc/fig/power-funs.pdf}
 \caption{caption here}\label{fig:power-funs}
 \end{figure}
+
+This simulations illustrate Theorem \ref{thm:growth} and Corollary
+\ref{cor:bound}. Figure \ref{fig:many-sims} shows that the power of the
+Wald text never exceeds the chance of no-separation. For data sets with
+large effects, separation might be very likely
+and---counter-intuitively---the chance of rejecting the null hypothesis
+might be very low. The simulations also, show, though, that the
+lieklihood ratio and score tests behave as expected.
 
 \hypertarget{re-analysis-of-barrilleaux-and-rainey-2014}{%
 \subsection{Re-Analysis of Barrilleaux and Rainey
@@ -565,6 +576,18 @@ but Rainey (2016) shows that the choice of penalty can impact the
 results. This example shows that the likelihood ratio and score tests
 offer reasonable \(p\)-values without using prior information or a
 identifying a suitable penalty.
+
+\hypertarget{conclusion}{%
+\subsection{Conclusion}\label{conclusion}}
+
+Separation commonly occurs in political science. When this happens, I
+shows that the usual Wald \(p\)-values are highly misleading. But
+researchers cannot always use suitable prior information to address a
+monotonic likelihood function. Even without a suitable prior or penalty,
+I show that the standard likelihood ratio and score tests behave in the
+usual way. As such, researchers can use the likelihood ratio and score
+tests to produce meaningful \(p\)-values under separation \emph{without
+the use of prior information}.
 
 \hypertarget{references}{%
 \section{References}\label{references}}

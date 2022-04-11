@@ -31,14 +31,19 @@ ggsave("doc/fig/many-sims.pdf", height = 2.5, width = 8, scale = 1)
 
 gg3_df <- smry %>%
   group_by(b_x, method) %>%
-  summarize(median_pr_reject = mean(pr_reject))
+  summarize(median_pr_reject = mean(pr_reject)) %>% 
+  glimpse()
+gg3s_df <- gg3_df %>%
+  rename(method_s = method) %>%
+  glimpse()
+
 ggplot() + 
-  facet_grid(rows = vars(method)) + 
+  facet_wrap(vars(method), ncol = 1) + 
   geom_point(data = smry, aes(x = b_x, y = pr_reject, color = pr_sep), shape = 21, alpha = 0.2) +
   geom_line(data = smry, aes(x = b_x, y = pr_reject, group = power_fn_id), alpha = 0.2, size = 0.1) +
   geom_hline(yintercept = 0.05) + 
-  geom_line(data = gg3_df, aes(x = b_x, y = median_pr_reject)) + 
-  #geom_point(data = gg3_df, aes(x = b_x, y = median_pr_reject)) + 
+  geom_line(data = gg3s_df, aes(x = b_x, y = median_pr_reject, group = method_s), size = 0.7, color = "#7570b3", alpha = 0.5, linetype = "longdash") + 
+  geom_line(data = gg3_df, aes(x = b_x, y = median_pr_reject), size = 1.5) + 
   theme_bw() + 
   scale_y_continuous(labels = scales::percent) +
   scale_color_gradient(low = "#1b9e77", high = "#d95f02") + 

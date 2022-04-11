@@ -29,17 +29,15 @@ var_names_df <- tribble(
 fits <- list()
 fits[[1]] <- glm(formula = f, family = binomial, data = br_df)
 fits[[2]] <- glm(formula = f, family = binomial, data = br_df, epsilon = 1e-300, maxit = 10000000)
-fits[[3]] <- brglm::brglm(formula = f, family = binomial, data = br_df)
-fits[[4]] <- arm::bayesglm(formula = f, family = binomial, data = br_df)
+#fits[[3]] <- brglm::brglm(formula = f, family = binomial, data = br_df)
+#fits[[4]] <- arm::bayesglm(formula = f, family = binomial, data = br_df)
 
 fits_1null <- update(fits[[1]], . ~ . - dem_governor)
 fits_2null <- update(fits[[2]], . ~ . - dem_governor)
 
 
 model_names <- c("ML with Default Precision",
-                 "ML with Maximum Precision",
-                 "PML with Jeffreys Penalty",
-                 "PML with Cauchy Penalty")
+                 "ML with Maximum Precision")
 
 # tidy fits
 tidy_fits_df <- fits %>%
