@@ -34,7 +34,7 @@ br <- read_csv(gh_data_url) %>%
     ## $ percent_metro         <dbl> -0.01191702, -0.10721941, 0.30521706, -0.2431471…
     ## $ dem_governor          <dbl> -0.4, -0.4, -0.4, 0.6, 0.6, 0.6, 0.6, 0.6, -0.4,…
 
-## Intial Fit with Maximum Likelihood
+## Initial Fit with Maximum Likelihood
 
 We can then fit the model from their Figure 2 using maximum likelihood.
 The separation problem is immediately apparent.

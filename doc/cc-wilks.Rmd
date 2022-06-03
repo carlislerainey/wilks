@@ -31,7 +31,7 @@ br <- read_csv(gh_data_url) %>%
   glimpse()
 ```
 
-## Intial Fit with Maximum Likelihood
+## Initial Fit with Maximum Likelihood
 
 We can then fit the model from their Figure 2 using maximum likelihood. The separation problem is immediately apparent.
 
