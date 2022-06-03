@@ -3,18 +3,19 @@ output:
   pdf_document: default
   html_document: default
 csl: bib/apsr.csl  
-title: Hypothesis Tests Under Separation
+title: Hypothesis Tests Under Separation[^title]
 author: Carlisle Rainey[^contact]
 ---
 
 [^contact]: Carlisle Rainey is Associate Professor of Political Science, Florida State University, 540 Bellamy, Tallahassee, FL, 32306. (\href{mailto:crainey@fsu.edu}{crainey@fsu.edu}).
 
+[^title]: All data and code for the paper are available at [https://github.com/carlislerainey/wilks/](https://github.com/carlislerainey/wilks/). A computational companion that illustrates how one can compute the quantities I discuss in the paper is available at [https://github.com/carlislerainey/wilks/blob/master/doc/cc-wilks.md](https://github.com/carlislerainey/wilks/blob/master/doc/cc-wilks.md). 
 
 \begin{center}
 Version from \today.
 \end{center}
 
-\singlespace
+\vspace{1cm}
 
 \begin{quote}
 Separation commonly occurs in political science, usually when a binary explanatory variable perfectly predicts a binary outcome. In these situations, methodologists often recommend penalized maximum likelihood or Bayesian estimation. But researchers might struggle to identify an appropriate penalty or prior distribution. I show that while the popular Wald test produces misleading (even nonsensical) $p$-values under separation, likelihood ratio tests and score tests behave in the usual manner. Therefore, researchers can produce meaningful $p$-values with standard frequentist tools under separation \textit{without the use of penalties or prior information}.
@@ -22,7 +23,8 @@ Separation commonly occurs in political science, usually when a binary explanato
 
 
 \newpage
-\onehalfspace
+
+\doublespacing
 
 Separation commonly occurs in political science, usually when a binary explanatory variable perfectly predicts a binary outcome [e.g., @Gustafson2020; @Owsiak2021; @Mehltretter2021]. For example, @BarrilleauxRainey2014 find that being a Democrat perfectly predicts a governor supporting Medicaid expansion under the Affordable Care Act. Under separation, the usual maximum likelihood estimates are unreasonably large and the Wald $p$-values are highly misleading.
 
