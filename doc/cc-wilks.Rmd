@@ -1,0 +1,137 @@
+---
+title: "Computational Companion"
+subtitle: 'to "Hypothesis Tests Under Separation"'
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(784123)
+```
+
+In this computational companion, I illustrate how to compute the Wald, likelihood ratio, and score $p$-values using data from Barrilleaux and Rainey (2014).
+
+## Preliminary Data Work
+
+First, I load the data from GitHub, select the variables we need (dropping the rest), and inverting the `gop_governor` indicator into an indicator of *Democratic* governors.
+
+```{r message=FALSE, warning=FALSE}
+
+# load packages
+library(tidyverse)
+
+# load data and tidy the data
+gh_data_url <- "https://raw.githubusercontent.com/carlislerainey/need/master/Data/politics_and_need_rescale.csv"
+br <- read_csv(gh_data_url) %>% 
+  select(oppose_expansion, gop_governor, percent_favorable_aca, gop_leg, percent_uninsured, 
+         bal2012, multiplier, percent_nonwhite, percent_metro) %>%
+  mutate(dem_governor = -1*gop_governor) %>%
+  glimpse()
+```
+
+## Intial Fit with Maximum Likelihood
+
+We can then fit the model from their Figure 2 using maximum likelihood. The separation problem is immediately apparent.
+
+```{r}
+# create model formula for the model shown in their Figure 2, p. 446
+f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+  bal2012 + multiplier + percent_nonwhite + percent_metro
+
+# fit model with maximum likelihood
+ml_fit <- glm(f, data = br, family = binomial)
+
+# print estimates and (Wald) p-values
+arm::display(ml_fit, detail = TRUE)
+```
+
+Under separation, the numerical algorithm is sensitive to numerical precision, so if we shrink the error tolerance, we obtain different coefficient estimates and standard error estimates. (Notice that the coefficient estimate gets *a little* larger, but the standard error estimate gets *a lot* larger--this is why the Wald test can never reject the null hypothesis under separation.)
+
+```{r}
+# fit model with maximum likelihood using maximum precision
+ml_fit_maxprec <- glm(f, data = br, family = binomial, epsilon = 10^-16, maxit = 10^10)
+
+# print estimates and (Wald) p-values
+arm::display(ml_fit_maxprec, detail = TRUE)
+```
+
+## Penalized Maximum Likelihood
+
+As an initial solution, we might try logistic regression with a Jeffreys or Cauchy prior. The Wald $p$-values from these penalized estimators are reasonable, but Rainey (2016) shows that the inferences depend on the penalty the researcher chooses. While we should not draw strong conclusions from this, the estimate using Jeffreys prior is not statistically significant, but the estimate using the Cauchy prior is statistically significant.
+
+```{r}
+# using jeffreys prior
+pml_fit_jeffreys <- brglm::brglm(f, family = binomial, data = br)
+summary(pml_fit_jeffreys)
+
+# using cauchy prior
+pml_fit_cauchy <- arm::bayesglm(f, family = binomial, data = br)
+summary(pml_fit_cauchy)
+```
+
+However, the likelihood ratio and score tests work well without a prior distribution or penalty, so they offer a principled, frequentist alternative to penalized and Bayesian estimators.
+
+## Likelihood Ratio Test
+
+The code computes the likelihood ratio test for the variable `dem_governor`. While it's possible to perform a likelihood-ratio test for each variable in the model, I've chosen to focus on a single variable. The single-variable approach aligns with the logic of the tests (i.e., an unrestricted model versus a restricted model) and clarifies that the test is not the standard Wald test. 
+
+```{r message=FALSE, warning=FALSE}
+# fit unrestricted model
+f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+  bal2012 + multiplier + percent_nonwhite + percent_metro
+ml_fit <- glm(f, data = br, family = binomial)
+
+# fit the restricted model (omit dem_governor variable)
+ml_fit0 <- update(ml_fit, . ~ . - dem_governor)
+
+# likelihood-ratio test
+anova(ml_fit0, ml_fit, test = "Chisq")
+# or alternatively
+anova(ml_fit0, ml_fit, test = "LRT")
+```
+
+For a slightly more convenient syntax, we can use the `lrtest()` function in the lmtest package.
+
+```{r message=FALSE, warning=FALSE}
+lmtest::lrtest(ml_fit, "dem_governor")  # specify name of variable to omit in the restricted model
+```
+
+Alternatively, we can use the `lr.test()` function in the mdscore package, though this requires fitting both models manually.
+
+```{r message=FALSE, warning=FALSE}
+mdscore::lr.test(ml_fit0, ml_fit)
+```
+
+## Score Test
+
+The code below computes the score test for the variable `dem_governor`. 
+
+```{r message=FALSE, warning=FALSE}
+# fit unrestricted model
+f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
+  bal2012 + multiplier + percent_nonwhite + percent_metro
+ml_fit <- glm(f, data = br, family = binomial)
+
+# fit the restricted model (omit dem_governor variable)
+ml_fit0 <- update(ml_fit, . ~ . - dem_governor)
+
+# likelihood-ratio test
+anova(ml_fit0, ml_fit, test = "Rao")
+```
+
+Alternatively, we can use the `glm.scoretest()` function in the statmod package or the `mdscore` function in the mdscore package, though these methods are slightly more tedious.
+
+```{r message=FALSE, warning=FALSE}
+mm <- model.matrix(ml_fit, data = br)
+score <- statmod::glm.scoretest(ml_fit0, x2 = mm[, 2])
+2*(1 - pnorm(abs(score))) # p-value
+```
+
+```{r message=FALSE, warning=FALSE}
+mm <- model.matrix(ml_fit, data = br)
+score <- mdscore::mdscore(ml_fit0, X1 = mm[, 2])
+summary(score)
+```
+

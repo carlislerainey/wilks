@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  8 APR 2022 12:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  3 JUN 2022 11:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -486,8 +486,7 @@ Package graphics Info: Driver file: pdftex.def on input line 99.
 )
 \Gin@req@height=\dimen125
 \Gin@req@width=\dimen126
-)
-No file wilks.aux.
+) (./wilks.aux)
 \openout1 = `wilks.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 73.
@@ -645,34 +644,16 @@ File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 75.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 95.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 95.
-[1
-
-{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 161.
-
-(/usr/local/texlive/2018/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [2]
-
-! LaTeX Error: Environment theorem undefined.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.235 \begin{theorem}
-                     \label{thm:growth} 
+! Undefined control sequence.
+l.80 \singlespace
+                  
 Here is how much of TeX's memory you used:
- 12709 strings out of 492649
- 185735 string characters out of 6129622
- 294236 words of memory out of 5000000
- 16310 multiletter control sequences out of 15000+600000
- 70744 words of font info for 104 fonts, out of 8000000 for 9000
+ 12533 strings out of 492649
+ 183255 string characters out of 6129622
+ 288343 words of memory out of 5000000
+ 16228 multiletter control sequences out of 15000+600000
+ 37323 words of font info for 54 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,11n,38p,234b,344s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 39i,11n,38p,234b,323s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 !  ==> Fatal error occurred, no output PDF file produced!
