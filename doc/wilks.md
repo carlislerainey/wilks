@@ -157,7 +157,7 @@ Finally, Figure \ref{fig:size} plots the size of the test (i.e., the chance of r
 
 \begin{figure}[!h]
 \includegraphics[width=\textwidth]{doc/fig/size.pdf}
-\caption{This figure shows the size for the Wald, likelihood ratio, and score tests for a diverse collection of data-generating processes, as well as the size for the Wald tests using Firth's and the Cauchy penalty.}\label{fig:size}
+\caption{This figure shows the size for the Wald, likelihood ratio, and score tests for a diverse collection of data-generating processes, as well as the size for the Wald tests using Firth's and the Cauchy penalty. The smoothed lines are an additive model.}\label{fig:size}
 \end{figure}
 
 # Concrete Recommendations
