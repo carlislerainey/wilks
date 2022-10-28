@@ -1,9 +1,7 @@
 ---
 title: "Computational Companion"
 subtitle: 'to "Hypothesis Tests Under Separation"'
-output:
-  md_document:
-    variant: markdown_github
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +13,7 @@ In this computational companion, I illustrate how to compute the Wald, likelihoo
 
 ## Preliminary Data Work
 
-First, I load the data from GitHub, select the variables we need (dropping the rest), and inverting the `gop_governor` indicator into an indicator of *Democratic* governors.
+First, I load the data from GitHub, select the variables we need (dropping the rest), and inverting the `gop_governor` indicator into an indicator of *Democratic* governors. Note that all numeric variable are rescaled to have mean 0 and SD 0.5 and all indicators are rescaled to have mean 0.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -27,13 +25,14 @@ gh_data_url <- "https://raw.githubusercontent.com/carlislerainey/need/master/Dat
 br <- read_csv(gh_data_url) %>% 
   select(oppose_expansion, gop_governor, percent_favorable_aca, gop_leg, percent_uninsured, 
          bal2012, multiplier, percent_nonwhite, percent_metro) %>%
-  mutate(dem_governor = -1*gop_governor) %>%
+  # recode binary predictor so that 1 perfectly predicts the outcome
+  mutate(dem_governor = 1 - (gop_governor - min(gop_governor))) %>%
   glimpse()
 ```
 
 ## Initial Fit with Maximum Likelihood
 
-We can then fit the model from their Figure 2 using maximum likelihood. The separation problem is immediately apparent.
+We can then fit the model from their Figure 2 using maximum likelihood. The separation problem is immediately apparent. The `z value` and `Pr(>|z|)` columns in the `summary()` output reports the Wald $z$-statistic and $p$-value.
 
 ```{r}
 # create model formula for the model shown in their Figure 2, p. 446
@@ -44,80 +43,82 @@ f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent
 ml_fit <- glm(f, data = br, family = binomial)
 
 # print estimates and (Wald) p-values
-arm::display(ml_fit, detail = TRUE)
+summary(ml_fit)
 ```
 
 Under separation, the numerical algorithm is sensitive to numerical precision, so if we shrink the error tolerance, we obtain different coefficient estimates and standard error estimates. (Notice that the coefficient estimate gets *a little* larger, but the standard error estimate gets *a lot* larger--this is why the Wald test can never reject the null hypothesis under separation.)
 
 ```{r}
 # fit model with maximum likelihood using maximum precision
-ml_fit_maxprec <- glm(f, data = br, family = binomial, epsilon = 10^-16, maxit = 10^10)
+ml_fit_maxprec <- glm(f, data = br, family = binomial, epsilon = .Machine$double.eps, maxit = 10^10)
 
 # print estimates and (Wald) p-values
-arm::display(ml_fit_maxprec, detail = TRUE)
+summary(ml_fit_maxprec)
 ```
 
-## Penalized Maximum Likelihood
+## Detecting Separation
 
-As an initial solution, we might try logistic regression with a Jeffreys or Cauchy prior. The Wald $p$-values from these penalized estimators are reasonable, but Rainey (2016) shows that the inferences depend on the penalty the researcher chooses. While we should not draw strong conclusions from this, the estimate using Jeffreys prior is not statistically significant, but the estimate using the Cauchy prior is statistically significant.
+After noticing the unusual coefficients and strangely large standard error estimates, we might use the detectseparation package to formally check that separation actually exists. The package has two methods: the pre-fit `detect_separation()` method and the post-fit `check_infinite_estimates()` method. Both methods should agree. See the [helpful vignette](https://cran.r-project.org/web/packages/detectseparation/vignettes/separation.html) for additional information.
 
 ```{r}
-# using jeffreys prior
-pml_fit_jeffreys <- brglm::brglm(f, family = binomial, data = br)
-summary(pml_fit_jeffreys)
+library(detectseparation)
 
-# using cauchy prior
-pml_fit_cauchy <- arm::bayesglm(f, family = binomial, data = br)
-summary(pml_fit_cauchy)
+# pre-fit detection
+ml_detect <- glm(f, data = br, family = binomial, method = "detect_separation")
+ml_detect
+
+# post-fit detection
+ml_detect <- glm(f, data = br, family = binomial, method = "detect_infinite_estimates")
+ml_detect
 ```
 
-However, the likelihood ratio and score tests work well without a prior distribution or penalty, so they offer a principled, frequentist alternative to penalized and Bayesian estimators.
+We can conveniently update the coefficient estimates with the output of `detect_separation()` or `check_infinite_estimates()`.
 
-## Likelihood Ratio Test
+```{r}
+# print coefficient estimates
+coef(ml_fit) + coef(ml_detect)
 
-The code computes the likelihood ratio test for the variable `dem_governor`. While it's possible to perform a likelihood-ratio test for each variable in the model, I've chosen to focus on a single variable. The single-variable approach aligns with the logic of the tests (i.e., an unrestricted model versus a restricted model) and clarifies that the test is not the standard Wald test. 
+# adjust estimates in texreg
+texreg::screenreg(list(ml_fit, ml_fit), 
+                  override.coef = list(coef(ml_fit),
+                                       coef(ml_fit) + coef(ml_detect)))
+```
+
+## Likelihood Ratio and Score Tests
+
+As a first step, we might want to obtain a $p$-value for the coefficient of `dem_governor` that is reasonable, but without turning immediately to penalized estimation, since Rainey (2016) shows that the inferences can be sensitive to the choice of prior. The likelihood ratio and score tests work well without a prior distribution or penalty, so they offer a principled, frequentist alternative to the $p$-values from penalized and Bayesian estimators.
+
+### Likelihood Ratio
+
+The below code computes the likelihood ratio test for the variable `dem_governor`.
 
 ```{r message=FALSE, warning=FALSE}
-# fit unrestricted model
-f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
-  bal2012 + multiplier + percent_nonwhite + percent_metro
-ml_fit <- glm(f, data = br, family = binomial)
-
 # fit the restricted model (omit dem_governor variable)
 ml_fit0 <- update(ml_fit, . ~ . - dem_governor)
 
-# likelihood-ratio test
+# likelihood ratio test
 anova(ml_fit0, ml_fit, test = "Chisq")
-# or alternatively
+```
+
+The code below computes the *same* likelihood ratio $p$-value by supplying the same `test = "LRT"` argument to `anova()`.
+
+```{r}
+# likelihood ratio test, alternatively
 anova(ml_fit0, ml_fit, test = "LRT")
 ```
 
-For a slightly more convenient syntax, we can use the `lrtest()` function in the lmtest package.
+For a slightly more convenient syntax, we can use the `lrtest()` function in the lmtest package. This function takes the unrestricted fit as the first argument and the name of the variable to be dropped in the restricted model as the second argument.
 
 ```{r message=FALSE, warning=FALSE}
 lmtest::lrtest(ml_fit, "dem_governor")  # specify name of variable to omit in the restricted model
 ```
 
-Alternatively, we can use the `lr.test()` function in the mdscore package, though this requires fitting both models manually.
-
-```{r message=FALSE, warning=FALSE}
-mdscore::lr.test(ml_fit0, ml_fit)
-```
-
-## Score Test
+### Score Test
 
 The code below computes the score test for the variable `dem_governor`. 
 
 ```{r message=FALSE, warning=FALSE}
-# fit unrestricted model
-f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
-  bal2012 + multiplier + percent_nonwhite + percent_metro
-ml_fit <- glm(f, data = br, family = binomial)
-
-# fit the restricted model (omit dem_governor variable)
-ml_fit0 <- update(ml_fit, . ~ . - dem_governor)
-
-# likelihood-ratio test
+# score test
 anova(ml_fit0, ml_fit, test = "Rao")
 ```
 
@@ -134,4 +135,39 @@ mm <- model.matrix(ml_fit, data = br)
 score <- mdscore::mdscore(ml_fit0, X1 = mm[, 2])
 summary(score)
 ```
+
+### Both Tests for All Variables in the Model
+
+The researcher only needs to compute the likelihood ratio or score tests for the separating variable (`dem_governor` in this case). However, the `summarylr()` function reports likelihood ratio and/or score tests for all coefficients. 
+
+```{r message=FALSE, warning=FALSE}
+# ml with default precision
+print(glmglrt::summarylr(ml_fit, force = TRUE, keep.wald = TRUE, 
+                         method = c("LRT", "Rao")), signif.stars = FALSE)
+
+# ml with maximum precision
+print(glmglrt::summarylr(ml_fit_maxprec, force = TRUE, keep.wald = TRUE, 
+                         method = c("LRT", "Rao")), signif.stars = FALSE)
+```
+
+## Penalized Maximum Likelihood
+
+To obtain reasonable point estimates and compute meaningful quantities of interest, the researcher needs to use penalized estimatioon. For example, they might use logistic regression with a Jeffreys or Cauchy prior. I do not illustrate it here, but Stan provides a powerful tool for MCMC simulation, especially when interfaced with R using the `rstan`, `cmdstanr`, `rstanarm`, or `brms` packages.
+
+The Wald $p$-values from these penalized estimators are reasonable, but Rainey (2016) shows that the inferences depend on the penalty the researcher chooses. While we should not draw strong conclusions from this, the estimate using Jeffreys prior is not statistically significant, but the estimate using the Cauchy prior is statistically significant.
+
+```{r}
+# using jeffreys prior
+pml_fit_jeffreys <- brglm::brglm(f, family = binomial, data = br)
+summary(pml_fit_jeffreys)
+
+# using cauchy prior
+pml_fit_cauchy <- arm::bayesglm(f, family = binomial, data = br)
+summary(pml_fit_cauchy)
+```
+
+Beyond the coefficient estimates and $p$-values, the researcher can use either of these approaches to obtain reseanable quantities of interest. Researchers should be wary, though, that default penalties are not suitable for all substantive applications, so careful thought about the prior distribution or robustness checks are warranted.
+
+I do not illustrate it here, but researchers can use the informal posterior simulation suggested by King, Tomz, and Wittenberg (2001) to simulate the model coefficients and then transform these into simulations of the quantities of interest. The `sim()` function in the arm package simulates the coefficients. 
+
 

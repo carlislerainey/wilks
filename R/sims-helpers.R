@@ -1,29 +1,38 @@
+
+# a function to create correlations between explanatory variables
+create_eta <- function(n_obs, n_z, rho) {
+  sigma <- matrix(rho, nrow = n_z + 1, ncol = n_z + 1)
+  diag(sigma) <- 1
+  eta <- mvtnorm::rmvnorm(n_obs, mean = rep(0, n_z + 1), sigma = sigma)
+}
+
+eta <- create_eta(n_obs = 200, n_z = 4, rho = 0.3)
+
 # a function to create the key explanatory variable
-create_x <- function(n_obs, n_x_1s) {
-  n_x_0s <- n_obs - n_x_1s                       # find the needed number of 0s
-  x <- c(rep(0, n_x_0s), rep(1, n_x_1s)) %>%     # create a vector containing the needed numbers, and
-    sample(size = n_obs, replace = FALSE) %>%    # ...randomize the order, and 
+create_x <- function(n_x_1s, eta) {
+  eta1 <- eta[, 1]                               # extract the first column of eta (corresponds to x, the separating variable)
+  x0a <- rank(-eta1, ties = "random")                       # find the ranks of eta1
+  x0b <- 1*(x0a <= n_x_1s)                        # find the n_x_1s highest values of eta1
+  x <- x0b %>%    # ...randomize the order, and 
     tibble(x = .)                                # ...put it into a tibble.
   return(x)
 }
 
 # test the function
-create_x(10, 2)
+create_x(2, eta)
 
 # a function to create the other explanatory variables
-create_Z <- function(n_obs, n_z) {
+create_Z <- function(n_z, eta) {
   if (n_z > 0) {
-    seq_len(n_z) %>%                     # for each column of controls...
-      map(~ rnorm(n = n_obs, 0, 0.5) %>% # - draw n_obs from norm dist
-            tibble(z = .)) %>%           # - put into a tibble.
-      bind_cols()                        # bind those tibble cols together, named z, z1, z2,...
+    round(eta[, 2:(n_z + 1)], 2) %>%
+      as_tibble(.name_repair = "universal")
   } else {
     NULL                               # return NULL for no controls
   }
 }
 
 # test the function
-create_Z(10, 0)
+create_Z(n_z = 4, eta)
 
 # create design matrix 
 create_design_matrix <- function(df) {
@@ -31,7 +40,9 @@ create_design_matrix <- function(df) {
 }
 
 # create function to expand b_x to include 0 and negatives
-expand_b_x <- function(b_x = c(0.25, 0.5, 1, 2, 4, 7, 10)) {  
+#expand_b_x <- function(b_x = c(0.25, 0.5, 1, 2, 4, 7, 10)) {  
+expand_b_x <- function(b_x = c(0, 1:5/10, 0.75, 1:5)) {  
+#expand_b_x <- function(b_x = c(0.25, 0.5, 2, 5)) {  
   c(-b_x, 0, b_x) %>%
     unique() %>%
     sort() %>%
@@ -173,11 +184,31 @@ ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
 ml0_fit <- glm(vote ~ race, data = turnout, family = binomial)
 compute_score(ml_fit, ml0_fit, df = turnout)
 
+# a function to compute the likelihood ratio
+compute_exact <- function(x, y) {
+  results_list <- list()
+  ft <- fisher.test(x = x, y = y)
+  results_list[[1]] <- tibble(p_value = ft$p.value, 
+                              computation = "fisher.test()")
+  # combine results
+  return_df <- results_list %>%
+    bind_rows(.) %>%
+    mutate(ht_method = "Exact Test",
+           estimation_method = "None")
+  return(return_df)
+} 
+
+# test the function
+data(turnout, package = "Zelig")
+compute_exact(x = turnout$race, y = turnout$vote)
+
+
 # test combination
 compute_wald(ml_fit) %>%
   bind_rows(compute_pwald(ml_fit, df = turnout)) %>%
   bind_rows(compute_lr(ml_fit, ml0_fit)) %>%
-  bind_rows(compute_score(ml_fit, ml0_fit, df = turnout))
+  bind_rows(compute_score(ml_fit, ml0_fit, df = turnout)) %>%
+  bind_rows(compute_exact(x = turnout$race, y = turnout$vote))
 
 # a function to simulate a p-value from it's sampling distribution given X and pr(y)
 simulate_p <- function(sims_info, scenario_index, simulation_index) {
@@ -191,8 +222,9 @@ simulate_p <- function(sims_info, scenario_index, simulation_index) {
   sep <- with(cdf, sum(table(y, x) == 0) > 0) & !no_variation
   # fit models
   ml_fit  <- glm(y ~ ., data = cdf, family = "binomial")
-  # ml_fit_prec  <- glm(y ~ ., data = df, family = "binomial", epsilon = 1e-300, maxit = 10000000)
+  #ml_fit_prec  <- glm(y ~ ., data = cdf, family = "binomial", epsilon = 1e-300, maxit = 10000000)
   ml0_fit <- update(ml_fit, formula = . ~ . - x)
+  #ml0_fit_prec <- update(ml_fit_prec, formula = . ~ . - x)
   # check whether separation exists
   # sep <- tryCatch(glm(y ~ ., data = df, family = "binomial", method = "detect_separation")[[4]],
   #                 error = function(e) { NA })
@@ -204,9 +236,13 @@ simulate_p <- function(sims_info, scenario_index, simulation_index) {
   # }
   # check calculations using mdscore package
   p_df <- compute_wald(ml_fit) %>%
-    #bind_rows(compute_pwald(ml_fit, cdf)) %>%
+    #bind_rows(compute_wald(ml_fit_prec) %>% mutate(estimation_method = "ML (w/ maximum precision)")) %>%
+    bind_rows(compute_pwald(ml_fit, cdf)) %>%
     bind_rows(compute_lr(ml_fit, ml0_fit)) %>%
+    #bind_rows(compute_lr(ml_fit_prec, ml0_fit_prec) %>% mutate(estimation_method = "ML (w/ maximum precision)")) %>%
     bind_rows(compute_score(ml_fit, ml0_fit, cdf)) %>%
+    #bind_rows(compute_score(ml_fit_prec, ml0_fit_prec, cdf) %>% mutate(estimation_method = "ML (w/ maximum precision)")) %>%
+    #bind_rows(compute_exact(x = cdf$x, y = cdf$y)) %>%
     mutate(events = sum(cdf$y),
            events_when_x_equals_1 = sum(cdf$y[cdf$x == 1]),
            events_when_x_equals_0 = sum(cdf$y[cdf$x == 0]),

@@ -17,7 +17,7 @@ gh_data_url <- "https://raw.githubusercontent.com/carlislerainey/need/master/Dat
 br <- read_csv(gh_data_url) %>% 
   select(oppose_expansion, gop_governor, percent_favorable_aca, gop_leg, percent_uninsured, 
          bal2012, multiplier, percent_nonwhite, percent_metro) %>%
-  mutate(dem_governor = -1*gop_governor) %>%
+  mutate(dem_governor = -gop_governor) %>%
   glimpse()
 ```
 
@@ -48,23 +48,36 @@ f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent
 ml_fit <- glm(f, data = br, family = binomial)
 
 # print estimates and (Wald) p-values
-arm::display(ml_fit, detail = TRUE)
+summary(ml_fit)
 ```
 
+    ## 
+    ## Call:
     ## glm(formula = f, family = binomial, data = br)
-    ##                       coef.est coef.se z value Pr(>|z|)
-    ## (Intercept)             -8.86  1289.76   -0.01    0.99 
-    ## dem_governor           -20.35  3224.40   -0.01    0.99 
-    ## percent_favorable_aca    0.13     1.55    0.08    0.93 
-    ## gop_leg                  2.43     1.48    1.64    0.10 
-    ## percent_uninsured        0.92     2.23    0.41    0.68 
-    ## bal2012                 -0.05     0.85   -0.06    0.95 
-    ## multiplier              -0.35     1.19   -0.30    0.77 
-    ## percent_nonwhite         1.43     2.62    0.55    0.58 
-    ## percent_metro           -2.76     1.69   -1.64    0.10 
-    ## ---
-    ##   n = 50, k = 9
-    ##   residual deviance = 31.7, null deviance = 62.7 (difference = 31.0)
+    ## 
+    ## Deviance Residuals: 
+    ##      Min        1Q    Median        3Q       Max  
+    ## -1.73776  -0.45518  -0.00001   0.59069   2.35004  
+    ## 
+    ## Coefficients:
+    ##                         Estimate Std. Error z value Pr(>|z|)
+    ## (Intercept)             -8.85514 1289.76013  -0.007    0.995
+    ## dem_governor           -20.34924 3224.39979  -0.006    0.995
+    ## percent_favorable_aca    0.12755    1.54920   0.082    0.934
+    ## gop_leg                  2.42938    1.47965   1.642    0.101
+    ## percent_uninsured        0.92303    2.23424   0.413    0.680
+    ## bal2012                 -0.05353    0.85353  -0.063    0.950
+    ## multiplier              -0.35474    1.19260  -0.297    0.766
+    ## percent_nonwhite         1.43356    2.61588   0.548    0.584
+    ## percent_metro           -2.75893    1.68666  -1.636    0.102
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 62.687  on 49  degrees of freedom
+    ## Residual deviance: 31.710  on 41  degrees of freedom
+    ## AIC: 49.71
+    ## 
+    ## Number of Fisher Scoring iterations: 19
 
 Under separation, the numerical algorithm is sensitive to numerical
 precision, so if we shrink the error tolerance, we obtain different
@@ -75,31 +88,44 @@ the null hypothesis under separation.)
 
 ``` r
 # fit model with maximum likelihood using maximum precision
-ml_fit_maxprec <- glm(f, data = br, family = binomial, epsilon = 10^-16, maxit = 10^10)
+ml_fit_maxprec <- glm(f, data = br, family = binomial, epsilon = .Machine$double.eps, maxit = 10^10)
 ```
 
     ## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 
 ``` r
 # print estimates and (Wald) p-values
-arm::display(ml_fit_maxprec, detail = TRUE)
+summary(ml_fit_maxprec)
 ```
 
-    ## glm(formula = f, family = binomial, data = br, epsilon = 10^-16, 
+    ## 
+    ## Call:
+    ## glm(formula = f, family = binomial, data = br, epsilon = .Machine$double.eps, 
     ##     maxit = 10^10)
-    ##                       coef.est    coef.se     z value     Pr(>|z|)   
-    ## (Intercept)                -14.87  6002399.27        0.00        1.00
-    ## dem_governor               -35.37 15005998.18        0.00        1.00
-    ## percent_favorable_aca        0.13        1.55        0.08        0.93
-    ## gop_leg                      2.43        1.48        1.64        0.10
-    ## percent_uninsured            0.92        2.23        0.41        0.68
-    ## bal2012                     -0.05        0.85       -0.06        0.95
-    ## multiplier                  -0.35        1.19       -0.30        0.77
-    ## percent_nonwhite             1.43        2.62        0.55        0.58
-    ## percent_metro               -2.76        1.69       -1.64        0.10
-    ## ---
-    ##   n = 50, k = 9
-    ##   residual deviance = 31.7, null deviance = 62.7 (difference = 31.0)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -1.7378  -0.4552   0.0000   0.5907   2.3500  
+    ## 
+    ## Coefficients:
+    ##                         Estimate Std. Error z value Pr(>|z|)
+    ## (Intercept)           -1.447e+01  6.002e+06   0.000    1.000
+    ## dem_governor          -3.438e+01  1.501e+07   0.000    1.000
+    ## percent_favorable_aca  1.275e-01  1.549e+00   0.082    0.934
+    ## gop_leg                2.429e+00  1.480e+00   1.642    0.101
+    ## percent_uninsured      9.230e-01  2.234e+00   0.413    0.680
+    ## bal2012               -5.353e-02  8.535e-01  -0.063    0.950
+    ## multiplier            -3.547e-01  1.193e+00  -0.297    0.766
+    ## percent_nonwhite       1.434e+00  2.616e+00   0.548    0.584
+    ## percent_metro         -2.759e+00  1.687e+00  -1.636    0.102
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 62.687  on 49  degrees of freedom
+    ## Residual deviance: 31.710  on 41  degrees of freedom
+    ## AIC: 49.71
+    ## 
+    ## Number of Fisher Scoring iterations: 33
 
 ## Penalized Maximum Likelihood
 
@@ -277,15 +303,7 @@ mdscore::lr.test(ml_fit0, ml_fit)
 The code below computes the score test for the variable `dem_governor`.
 
 ``` r
-# fit unrestricted model
-f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 
-  bal2012 + multiplier + percent_nonwhite + percent_metro
-ml_fit <- glm(f, data = br, family = binomial)
-
-# fit the restricted model (omit dem_governor variable)
-ml_fit0 <- update(ml_fit, . ~ . - dem_governor)
-
-# likelihood-ratio test
+# score test
 anova(ml_fit0, ml_fit, test = "Rao")
 ```
 
@@ -323,3 +341,93 @@ summary(score)
     ##                Df  Value  P-value
     ## Score           1   6.82   0.0090
     ## Modified score  1   6.14   0.0132
+
+The `summarylr()` function reports likelihood ratio and/or score tests
+for all coefficients.
+
+``` r
+# ml with default precision
+print(glmglrt::summarylr(ml_fit, force = TRUE, keep.wald = TRUE, method = c("LRT", "Rao")), signif.stars = FALSE)
+```
+
+    ## 
+    ## Call:
+    ## glm(formula = f, family = binomial, data = br)
+    ## 
+    ## Deviance Residuals: 
+    ##      Min        1Q    Median        3Q       Max  
+    ## -1.73776  -0.45518  -0.00001   0.59069   2.35004  
+    ## 
+    ## Coefficients:
+    ##                         Estimate Std. Error z value   Pr(>|z|) LRT P-value
+    ## (Intercept)           -8.855e+00  1.290e+03  -0.007  9.945e-01   5.001e-05
+    ## dem_governor          -2.035e+01  3.224e+03  -0.006  9.950e-01   2.946e-03
+    ## percent_favorable_aca  1.275e-01  1.549e+00   0.082  9.344e-01   9.343e-01
+    ## gop_leg                2.429e+00  1.480e+00   1.642  1.006e-01   6.283e-02
+    ## percent_uninsured      9.230e-01  2.234e+00   0.413  6.795e-01   6.778e-01
+    ## bal2012               -5.353e-02  8.535e-01  -0.063  9.500e-01   9.504e-01
+    ## multiplier            -3.547e-01  1.193e+00  -0.297  7.661e-01   7.658e-01
+    ## percent_nonwhite       1.434e+00  2.616e+00   0.548  5.837e-01   5.807e-01
+    ## percent_metro         -2.759e+00  1.687e+00  -1.636  1.019e-01   5.558e-02
+    ##                       Rao P-value
+    ## (Intercept)              0.000312
+    ## dem_governor             0.009037
+    ## percent_favorable_aca    0.934374
+    ## gop_leg                  0.072807
+    ## percent_uninsured        0.678384
+    ## bal2012                  0.949954
+    ## multiplier               0.765636
+    ## percent_nonwhite         0.581617
+    ## percent_metro            0.075541
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 62.687  on 49  degrees of freedom
+    ## Residual deviance: 31.710  on 41  degrees of freedom
+    ## AIC: 49.71
+    ## 
+    ## Number of Fisher Scoring iterations: 19
+
+``` r
+# ml with maximum precision
+print(glmglrt::summarylr(ml_fit_maxprec, force = TRUE, keep.wald = TRUE, method = c("LRT", "Rao")), signif.stars = FALSE)
+```
+
+    ## 
+    ## Call:
+    ## glm(formula = f, family = binomial, data = br, epsilon = .Machine$double.eps, 
+    ##     maxit = 10^10)
+    ## 
+    ## Deviance Residuals: 
+    ##     Min       1Q   Median       3Q      Max  
+    ## -1.7378  -0.4552   0.0000   0.5907   2.3500  
+    ## 
+    ## Coefficients:
+    ##                         Estimate Std. Error z value   Pr(>|z|) LRT P-value
+    ## (Intercept)           -1.447e+01  6.002e+06   0.000  1.000e+00   5.001e-05
+    ## dem_governor          -3.438e+01  1.501e+07   0.000  1.000e+00   2.946e-03
+    ## percent_favorable_aca  1.275e-01  1.549e+00   0.082  9.344e-01   9.343e-01
+    ## gop_leg                2.429e+00  1.480e+00   1.642  1.006e-01   6.283e-02
+    ## percent_uninsured      9.230e-01  2.234e+00   0.413  6.795e-01   6.778e-01
+    ## bal2012               -5.353e-02  8.535e-01  -0.063  9.500e-01   9.504e-01
+    ## multiplier            -3.547e-01  1.193e+00  -0.297  7.661e-01   7.658e-01
+    ## percent_nonwhite       1.434e+00  2.616e+00   0.548  5.837e-01   5.807e-01
+    ## percent_metro         -2.759e+00  1.687e+00  -1.636  1.019e-01   5.558e-02
+    ##                       Rao P-value
+    ## (Intercept)              0.000312
+    ## dem_governor             0.009037
+    ## percent_favorable_aca    0.934374
+    ## gop_leg                  0.072807
+    ## percent_uninsured        0.678383
+    ## bal2012                  0.949955
+    ## multiplier               0.765636
+    ## percent_nonwhite         0.581617
+    ## percent_metro            0.075541
+    ## 
+    ## (Dispersion parameter for binomial family taken to be 1)
+    ## 
+    ##     Null deviance: 62.687  on 49  degrees of freedom
+    ## Residual deviance: 31.710  on 41  degrees of freedom
+    ## AIC: 49.71
+    ## 
+    ## Number of Fisher Scoring iterations: 33

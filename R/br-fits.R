@@ -5,7 +5,9 @@ library(broom)
 
 # load data
 br_df <- read_csv("data/politics_and_need_rescale.csv") %>%
-  mutate(dem_governor = 1 - gop_governor)
+  mutate(dem_governor = -gop_governor)
+
+table(br_df$dem_governor, br_df$oppose_expansion)
 
 # create model formula for the model shown in their Figure 2, p. 446
 f <- oppose_expansion ~ dem_governor + percent_favorable_aca + gop_leg + percent_uninsured + 

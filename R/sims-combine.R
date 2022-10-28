@@ -27,5 +27,4 @@ sims <- files %>%
                                                 "PML (Firth) w/ Wald", 
                                                 "PML (Cauchy) w/ Wald")))) %>%
   write_rds("output/combined-sims.rds") %>%
-  write_rds("output/combined-sims.rds") %>%
   glimpse()

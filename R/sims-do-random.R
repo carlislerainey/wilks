@@ -14,21 +14,15 @@ source("R/sims-helpers.R")
 
 # set up simulation parameters
 # ----------------------------
-n_mc_sims <- 1000
-# scenarios <-crossing(n_x_1s = c(5, 25, 50, 100, 250),
-#                       b_cons = c(-8, -5, -2.5, -1, 0, 1, 2.5, 5, 8),
-#                       n_z = c(2, 6),
-#                       n_obs = c(50, 250, 500), 
-#                       rho = c(-0.6, -0.3, 0.0, 0.3, 0.6)) %>% glimpse %>%
-scenarios <- crossing(n_x_1s = c(5, 10, 100),
-                      b_cons = c(-5, -1, 0, 1, 5),
-                      n_z = c(0, 2),
-                      n_obs = c(50, 100, 1000),
-                      rho = c(-0.5, 0.0, 0.5)) %>% glimpse %>%
-  #filter(n_x_1s == 250, b_cons == -5, n_obs == 500, n_z == 2) %>%  # <--- delete this
-  filter(n_x_1s < n_obs) %>% glimpse %>%
-  #filter(n_x_1s < 250, n_z == 4, n_obs < 5000, b_cons < 0) %>%
-  sample_n(10) %>%
+n_mc_sims <- 2000
+n_scenarios <- 2000
+scenarios <- crossing(n_x_1s = c(5, 10, 25, 50, 100),
+                      n_obs = c(50, 100, 1000)) %>%
+  filter(n_x_1s < n_obs) %>% 
+  sample_n(n_scenarios, replace = TRUE) %>% 
+  mutate(b_cons = round(runif(n(), -5, 0), 1),
+         n_z = floor(runif(n(), 0, 6)),
+         rho = round(runif(n(), 0.0, 0.5), 2)) %>% 
   mutate(power_fn_id = sample(1:n())) %>%
   glimpse() %>%
   mutate(eta = pmap(list(n_obs, n_z, rho = 0.5), create_eta), 
@@ -42,19 +36,36 @@ scenarios <- crossing(n_x_1s = c(5, 10, 100),
   ungroup() %>%
   mutate(pr_all_1s = map_dbl(pr_y, ~ prod(.x)),
          pr_all_0s = map_dbl(pr_y, ~ prod(1 - .x)),
-         pr_no_variation = pr_all_0s + pr_all_1s) %>% 
-  filter(pr_no_variation < 0.001) %>%
-  mutate(scenario_id = 1:n()) %>%
+         pr_no_variation = pr_all_0s + pr_all_1s, 
+         pr_sep11 = map2_dbl(x, pr_y, ~ exp(sum(.x*log(.y)))),
+         pr_sep10 = map2_dbl(x, pr_y, ~ exp(sum(.x*log(1 - .y)))),
+         pr_sep01 = map2_dbl(x, pr_y, ~ exp(sum((1 - .x)*log(.y)))),
+         pr_sep00 = map2_dbl(x, pr_y, ~ exp(sum((1 - .x)*log(1 - .y)))),
+         pr_sep = (pr_sep11 + pr_sep10) + (pr_sep01 + pr_sep00) - (pr_sep11 + pr_sep10)*(pr_sep01 + pr_sep00)) %>% 
+  group_by(power_fn_id) %>%
+  mutate(pr_sep_at_null = pr_sep[b_x == 0], 
+         max_pr_sep = max(pr_sep),
+         max_pr_no_variation = max(pr_no_variation)) %>%
+  nest(data = !c(max_pr_sep, pr_sep_at_null, max_pr_no_variation)) %>% 
+  filter(max_pr_sep > 0.30, max_pr_no_variation < 0.001) %>% glimpse() %>%
+  sample_n(400, replace = FALSE) %>%  glimpse() %>% # replace only while testing
+  unnest(cols = c(data)) %>%
+  #filter(pr_no_variation < 0.001) %>%
+  ungroup() %>%
+  mutate(scenario_id = sample(1:n())) %>%
   #filter(power_fn_id %in% 7:12) %>%
   #filter(n_x_1s == 250, b_cons == -2.5, n_obs == 500, n_z == 2) %>%  # the single sim
   glimpse()
 
-# ggplot(scenarios, aes(x = b_x, y = pr_no_variation)) + 
-#   geom_point()
-# 
-# ggplot(scenarios, aes(x = b_x, y = pr_no_variation)) + 
-#   geom_point() + 
-#   facet_wrap(vars(power_fn_id))
+hist(scenarios$b_cons)
+hist(scenarios$n_z)
+hist(scenarios$n_obs)
+hist(scenarios$rho)
+hist(scenarios$n_x_1s)
+
+ggplot(scenarios, aes(x = b_x, y = pr_sep, group = power_fn_id, color = pr_sep_at_null)) + 
+  geom_point(alpha = 0.3) + 
+  facet_wrap(vars(power_fn_id))
 
 sims_info <- scenarios %>%
   dplyr::select(scenario_id, x, Z, df, design_matrix, pr_y) %>%
@@ -101,7 +112,7 @@ sims_df <- foreach(i = 1:length(sims_info$scenario_id), .options.RNG = 2983, .pa
   # do simulations
   sims <- foreach (j = 1:n_mc_sims, .combine = rbind) %do% { 
     simulate_p(sims_info, sims_info$scenario_id[i], j) 
-    } 
+  } 
   filename <- paste0("output/scenario-sims/scenario-", 
                      sprintf("%05d", sims_info$scenario_id[i]), ".csv")
   write_csv(sims, filename)

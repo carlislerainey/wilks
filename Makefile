@@ -46,7 +46,7 @@ output/summarized-simulations.rds: R/sims-helpers.R R/sims-do.R R/sims-combine.R
 # ----------
 	
 doc/wilks.pdf: doc/wilks.md doc/options.sty doc/misc/count-document-words.R doc/tab/single-sim.tex
-	Rscript doc/misc/count-document-words.R
+	#Rscript doc/misc/count-document-words.R
 	pandoc -H doc/options.sty -V fontsize=12pt $< -o $@ --bibliography=doc/bib/bibliography.bib --csl doc/bib/apsr.csl
 	open doc/wilks.pdf
 

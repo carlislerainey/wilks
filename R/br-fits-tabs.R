@@ -20,7 +20,7 @@ k_df <- tidy_fits_df %>%
   mutate_if(is.numeric, ~ case_when(. > 1000000 ~ scales::unit_format(unit = "million", scale = 1e-6, digits = 2)(.),
                                     . > 1000 ~ scales::number(., accuracy = 2, big.mark = ","),
                                     is.na(.) ~ "", 
-                                    TRUE ~ scales::number(., accuracy = 0.01, big.mark = ","))) %>%
+                                    TRUE ~ scales::number(., accuracy = 0.001, big.mark = ","))) %>%
   glimpse()
 
 k <- k_df %>%

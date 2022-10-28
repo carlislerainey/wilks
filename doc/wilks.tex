@@ -63,7 +63,12 @@
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
-\title{Hypothesis Tests Under Separation}
+\title{Hypothesis Tests Under Separation\footnote{All data and code for
+  the paper are available at
+  \url{https://github.com/carlislerainey/wilks/}. A computational
+  companion that illustrates how one can compute the quantities I
+  discuss in the paper is available at
+  \url{https://github.com/carlislerainey/wilks/blob/master/doc/cc-wilks.md}.}}
 \author{Carlisle Rainey\footnote{Carlisle Rainey is Associate Professor
   of Political Science, Florida State University, 540 Bellamy,
   Tallahassee, FL, 32306.
@@ -77,14 +82,15 @@
 Version from \today.
 \end{center}
 
-\singlespace
+\vspace{1cm}
 
 \begin{quote}
 Separation commonly occurs in political science, usually when a binary explanatory variable perfectly predicts a binary outcome. In these situations, methodologists often recommend penalized maximum likelihood or Bayesian estimation. But researchers might struggle to identify an appropriate penalty or prior distribution. I show that while the popular Wald test produces misleading (even nonsensical) $p$-values under separation, likelihood ratio tests and score tests behave in the usual manner. Therefore, researchers can produce meaningful $p$-values with standard frequentist tools under separation \textit{without the use of penalties or prior information}.
 \end{quote}
 
 \newpage
-\onehalfspace
+
+\doublespacing
 
 Separation commonly occurs in political science, usually when a binary
 explanatory variable perfectly predicts a binary outcome {[}e.g.,
@@ -470,6 +476,70 @@ not equal zero, especially for large, negative coefficients.\footnote{This
 \caption{The power functions for the Wald, likelihood ratio, and score tests for a diverse collection of data-generating processes that sometimes generate separation.}\label{fig:power-funs}
 \end{figure}
 
+\hypertarget{practical-advice}{%
+\section{Practical Advice}\label{practical-advice}}
+
+Given the arguments above, how should researchers proceed when facing
+separation? I offer the following {[}ADD NUMBER HERE{]} pieces of
+advice, which incorporate my advice with the larger literature.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \emph{Identify separation.} Software varies in how and whether it
+  detects and reports the presence of separation. Become familiar with
+  your preferred software.\footnote{As of this writing, the
+    \texttt{glm()} function in R \emph{sometimes} reports a warning that
+    ``fitted probabilities numerically 0 or 1 occurred.'' The researcher
+    must detect separation by noticing the unusually large coefficient
+    estimate and standard error. Stata's \texttt{logit} and
+    \texttt{probit} commands print a ``note'' that describes the
+    separation. It then drops the problematic variable and the
+    observations it perfectly predicts.}
+\item
+  \emph{Do not drop the separating variable.} If a variable creates
+  separation, then researchers might be tempted to drop the offending
+  variable. This is poor practice. See Zorn (2005) for more details.
+\item
+  \emph{Test the hypothesis about the effect of the separating
+  variable}. While the point estimates might be implausible and the Wald
+  \(p\)-values nonsensical, researchers can still use a likelihood ratio
+  and/or score test to obtain a useful \(p\)-value and test the null
+  hypothesis that the coefficient for the separating variable equals
+  zero. If the coefficient of the separating variable is not of
+  substantive interest (i.e., the researcher does not have a specific
+  hypothesis about its value; the researcher includes the separating
+  variable only as a control), then there is no need to perform this
+  hypothesis test. The researcher can report this test in the text of
+  the paper and/or in a regression table, carefully distinguishing the
+  likelihood ratio and/or score tests from the Wald test readers expect.
+\item
+  \emph{Estimate the coefficients and uncertainty using penalized
+  maximum likelihood or Bayesian estimation}. Firth (1993) and Gelman et
+  al.~(2008) offer reasonable default penalties or prior distributions
+  that might work well for a given substantive application. However,
+  Rainey (2016) shows that the inferences can meaningfully depend on the
+  chosen penalty or prior. With this sensitivity in mind, the researcher
+  should choose the penalty or prior \emph{carefully} and/or check the
+  robustness of their conclusions to alternative prior
+  specifications.\footnote{The simulations above suggest that
+    researchers should be especially skeptical of the \(p\)-values from
+    the Firth penalty. The simulations show that the Firth \(p\)-values
+    can reject the null hypothesis incorrectly at well above the nominal
+    rate for a variable that often creates separation.}
+\item
+  \emph{Compute substantively meaningful quantities of interest and
+  uncertainty}. Researchers using penalized maximum likelihood can use
+  the informal posterior simulation procedure suggested by King, Tomz,
+  and Wittenberg (2001) (see also Gelman and Hill 2006; Bell and Miller
+  YYYY for an example.) to compute point estimates and confidence
+  intervals for the quantities of interest. Researchers using full
+  posterior simulation can transform the simulations of the model
+  coefficients to obtain posterior simulations of the quantities of
+  interest.
+\end{enumerate}
+
 \hypertarget{re-analysis-of-barrilleaux-and-rainey-2014}{%
 \section{Re-Analysis of Barrilleaux and Rainey
 (2014)}\label{re-analysis-of-barrilleaux-and-rainey-2014}}
@@ -509,6 +579,27 @@ The $p$-values from several procedures that researchers might use when dealing w
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+% Table generated by Excel2LaTeX from sheet 'Sheet1'
+\begin{table}[htbp]
+  \centering
+  \caption{Add caption}
+    \begin{tabular}{lrrrrrrrrrrrr}
+    \textcolor[rgb]{ .2,  .2,  .2}{} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{ML w/ Default Precision}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{ML w/ Maximum Precision}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{PML w/ Firth's Penalty}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{PML w/ Cauchy Penalty}} &       &       &       &       &       &       &       &  \\
+    \textcolor[rgb]{ .2,  .2,  .2}{Est.} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{S.E.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{p}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{Est.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{S.E.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{p}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{Est.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{S.E.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{p}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{Est.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{S.E.}} & \multicolumn{1}{l}{\textcolor[rgb]{ .2,  .2,  .2}{p}} &  \\
+    \textcolor[rgb]{ .2,  .2,  .2}{(Intercept)} & \textcolor[rgb]{ .2,  .2,  .2}{-8.855} & \textcolor[rgb]{ .2,  .2,  .2}{1289.76} & \textcolor[rgb]{ .2,  .2,  .2}{0.995} & \textcolor[rgb]{ .2,  .2,  .2}{-14.865} & \textcolor[rgb]{ .2,  .2,  .2}{6002399} & \textcolor[rgb]{ .2,  .2,  .2}{1} & \textcolor[rgb]{ .2,  .2,  .2}{-1.496} & \textcolor[rgb]{ .2,  .2,  .2}{0.604} & \textcolor[rgb]{ .2,  .2,  .2}{0.013} & \textcolor[rgb]{ .2,  .2,  .2}{-1.913} & \textcolor[rgb]{ .2,  .2,  .2}{0.758} & \textcolor[rgb]{ .2,  .2,  .2}{0.012} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{dem\_governor} & \textcolor[rgb]{ .2,  .2,  .2}{-20.349} & \textcolor[rgb]{ .2,  .2,  .2}{3224.4} & \textcolor[rgb]{ .2,  .2,  .2}{0.995} & \textcolor[rgb]{ .2,  .2,  .2}{-35.375} & \textcolor[rgb]{ .2,  .2,  .2}{1.5E+07} & \textcolor[rgb]{ .2,  .2,  .2}{1} & \textcolor[rgb]{ .2,  .2,  .2}{-2.677} & \textcolor[rgb]{ .2,  .2,  .2}{1.421} & \textcolor[rgb]{ .2,  .2,  .2}{0.06} & \textcolor[rgb]{ .2,  .2,  .2}{-3.379} & \textcolor[rgb]{ .2,  .2,  .2}{1.631} & \textcolor[rgb]{ .2,  .2,  .2}{0.038} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{percent\_favorable\_aca} & \textcolor[rgb]{ .2,  .2,  .2}{0.128} & \textcolor[rgb]{ .2,  .2,  .2}{1.549} & \textcolor[rgb]{ .2,  .2,  .2}{0.934} & \textcolor[rgb]{ .2,  .2,  .2}{0.128} & \textcolor[rgb]{ .2,  .2,  .2}{1.549} & \textcolor[rgb]{ .2,  .2,  .2}{0.934} & \textcolor[rgb]{ .2,  .2,  .2}{-0.138} & \textcolor[rgb]{ .2,  .2,  .2}{1.313} & \textcolor[rgb]{ .2,  .2,  .2}{0.916} & \textcolor[rgb]{ .2,  .2,  .2}{-0.208} & \textcolor[rgb]{ .2,  .2,  .2}{1.035} & \textcolor[rgb]{ .2,  .2,  .2}{0.84} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{gop\_leg} & \textcolor[rgb]{ .2,  .2,  .2}{2.429} & \textcolor[rgb]{ .2,  .2,  .2}{1.48} & \textcolor[rgb]{ .2,  .2,  .2}{0.101} & \textcolor[rgb]{ .2,  .2,  .2}{2.429} & \textcolor[rgb]{ .2,  .2,  .2}{1.48} & \textcolor[rgb]{ .2,  .2,  .2}{0.101} & \textcolor[rgb]{ .2,  .2,  .2}{1.618} & \textcolor[rgb]{ .2,  .2,  .2}{1.174} & \textcolor[rgb]{ .2,  .2,  .2}{0.168} & \textcolor[rgb]{ .2,  .2,  .2}{1.696} & \textcolor[rgb]{ .2,  .2,  .2}{1.061} & \textcolor[rgb]{ .2,  .2,  .2}{0.11} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{percent\_uninsured} & \textcolor[rgb]{ .2,  .2,  .2}{0.923} & \textcolor[rgb]{ .2,  .2,  .2}{2.234} & \textcolor[rgb]{ .2,  .2,  .2}{0.68} & \textcolor[rgb]{ .2,  .2,  .2}{0.923} & \textcolor[rgb]{ .2,  .2,  .2}{2.234} & \textcolor[rgb]{ .2,  .2,  .2}{0.68} & \textcolor[rgb]{ .2,  .2,  .2}{0.18} & \textcolor[rgb]{ .2,  .2,  .2}{1.127} & \textcolor[rgb]{ .2,  .2,  .2}{0.873} & \textcolor[rgb]{ .2,  .2,  .2}{0.6} & \textcolor[rgb]{ .2,  .2,  .2}{1.078} & \textcolor[rgb]{ .2,  .2,  .2}{0.578} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{bal2012} & \textcolor[rgb]{ .2,  .2,  .2}{-0.054} & \textcolor[rgb]{ .2,  .2,  .2}{0.854} & \textcolor[rgb]{ .2,  .2,  .2}{0.95} & \textcolor[rgb]{ .2,  .2,  .2}{-0.054} & \textcolor[rgb]{ .2,  .2,  .2}{0.854} & \textcolor[rgb]{ .2,  .2,  .2}{0.95} & \textcolor[rgb]{ .2,  .2,  .2}{-0.123} & \textcolor[rgb]{ .2,  .2,  .2}{0.725} & \textcolor[rgb]{ .2,  .2,  .2}{0.865} & \textcolor[rgb]{ .2,  .2,  .2}{0.155} & \textcolor[rgb]{ .2,  .2,  .2}{0.751} & \textcolor[rgb]{ .2,  .2,  .2}{0.837} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{multiplier} & \textcolor[rgb]{ .2,  .2,  .2}{-0.355} & \textcolor[rgb]{ .2,  .2,  .2}{1.193} & \textcolor[rgb]{ .2,  .2,  .2}{0.766} & \textcolor[rgb]{ .2,  .2,  .2}{-0.355} & \textcolor[rgb]{ .2,  .2,  .2}{1.193} & \textcolor[rgb]{ .2,  .2,  .2}{0.766} & \textcolor[rgb]{ .2,  .2,  .2}{-0.326} & \textcolor[rgb]{ .2,  .2,  .2}{1.018} & \textcolor[rgb]{ .2,  .2,  .2}{0.748} & \textcolor[rgb]{ .2,  .2,  .2}{-0.162} & \textcolor[rgb]{ .2,  .2,  .2}{0.877} & \textcolor[rgb]{ .2,  .2,  .2}{0.853} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{percent\_nonwhite} & \textcolor[rgb]{ .2,  .2,  .2}{1.434} & \textcolor[rgb]{ .2,  .2,  .2}{2.616} & \textcolor[rgb]{ .2,  .2,  .2}{0.584} & \textcolor[rgb]{ .2,  .2,  .2}{1.434} & \textcolor[rgb]{ .2,  .2,  .2}{2.616} & \textcolor[rgb]{ .2,  .2,  .2}{0.584} & \textcolor[rgb]{ .2,  .2,  .2}{1.562} & \textcolor[rgb]{ .2,  .2,  .2}{1.208} & \textcolor[rgb]{ .2,  .2,  .2}{0.196} & \textcolor[rgb]{ .2,  .2,  .2}{0.934} & \textcolor[rgb]{ .2,  .2,  .2}{1.245} & \textcolor[rgb]{ .2,  .2,  .2}{0.453} \\
+    \textcolor[rgb]{ .2,  .2,  .2}{percent\_metro} & \textcolor[rgb]{ .2,  .2,  .2}{-2.759} & \textcolor[rgb]{ .2,  .2,  .2}{1.687} & \textcolor[rgb]{ .2,  .2,  .2}{0.102} & \textcolor[rgb]{ .2,  .2,  .2}{-2.759} & \textcolor[rgb]{ .2,  .2,  .2}{1.687} & \textcolor[rgb]{ .2,  .2,  .2}{0.102} & \textcolor[rgb]{ .2,  .2,  .2}{-1.82} & \textcolor[rgb]{ .2,  .2,  .2}{1.188} & \textcolor[rgb]{ .2,  .2,  .2}{0.126} & \textcolor[rgb]{ .2,  .2,  .2}{-1.46} & \textcolor[rgb]{ .2,  .2,  .2}{1.044} & \textcolor[rgb]{ .2,  .2,  .2}{0.162} \\
+    \end{tabular}%
+  \label{tab:addlabel}%
+\end{table}%
+
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
