@@ -1,4 +1,6 @@
 
+library(tidyverse)
+
 # a function to create correlations between explanatory variables
 create_eta <- function(n_obs, n_z, rho) {
   sigma <- matrix(rho, nrow = n_z + 1, ncol = n_z + 1)
@@ -25,7 +27,7 @@ create_x(2, eta)
 create_Z <- function(n_z, eta) {
   if (n_z > 0) {
     round(eta[, 2:(n_z + 1)], 2) %>%
-      as_tibble(.name_repair = "universal")
+      as_tibble(.name_repair = "unique")
   } else {
     NULL                               # return NULL for no controls
   }
@@ -184,31 +186,13 @@ ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
 ml0_fit <- glm(vote ~ race, data = turnout, family = binomial)
 compute_score(ml_fit, ml0_fit, df = turnout)
 
-# a function to compute the likelihood ratio
-compute_exact <- function(x, y) {
-  results_list <- list()
-  ft <- fisher.test(x = x, y = y)
-  results_list[[1]] <- tibble(p_value = ft$p.value, 
-                              computation = "fisher.test()")
-  # combine results
-  return_df <- results_list %>%
-    bind_rows(.) %>%
-    mutate(ht_method = "Exact Test",
-           estimation_method = "None")
-  return(return_df)
-} 
-
-# test the function
-data(turnout, package = "Zelig")
-compute_exact(x = turnout$race, y = turnout$vote)
 
 
 # test combination
 compute_wald(ml_fit) %>%
   bind_rows(compute_pwald(ml_fit, df = turnout)) %>%
   bind_rows(compute_lr(ml_fit, ml0_fit)) %>%
-  bind_rows(compute_score(ml_fit, ml0_fit, df = turnout)) %>%
-  bind_rows(compute_exact(x = turnout$race, y = turnout$vote))
+  bind_rows(compute_score(ml_fit, ml0_fit, df = turnout))
 
 # a function to simulate a p-value from it's sampling distribution given X and pr(y)
 simulate_p <- function(sims_info, scenario_index, simulation_index) {
@@ -277,7 +261,7 @@ report_time_starting <- function(t1 = start_time,
 
 report_time_worked <- function(t1 = start_time, t2 = start_i_time) {
   time_worked <- difftime(Sys.time(), t2, units = "auto")
-  frac_finished <- i/max(sims_info$scenario_id)
+  frac_finished <- i/length(sims_info$scenario_id)
   d <- difftime(Sys.time(), t1, units = "auto")
   etf <- Sys.time() + d/frac_finished
   msg <- paste0("\t finished in ", 

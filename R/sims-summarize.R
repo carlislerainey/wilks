@@ -44,12 +44,20 @@ data_s <- data %>%
   glimpse()
 length(unique(data_s$power_fn_id))
 
-pids <- unique(data_s$power_fn_id)
-s_pids <- sample(pids, size = 150)
-data_ss <- data_s %>%
-  filter(power_fn_id %in% s_pids) %>%
-  glimpse()
-length(unique(data_ss$power_fn_id))
+#pids <- unique(data_s$power_fn_id)
+#s_pids <- sample(pids, size = 150)
+#data_ss <- data_s %>%
+#  filter(power_fn_id %in% s_pids) %>%
+#  glimpse()
+#length(unique(data_ss$power_fn_id))
 
 
 write_rds(data, "output/summarized-simulations.rds")
+
+data <- read_rds("output/summarized-simulations.rds") %>%
+  left_join(read_rds("output/scenario-info.rds")) %>% 
+  select(power_fn_id, n_obs, n_x_1s, b_cons, n_z, rho, b_x, method, pr_sep, pr_reject) %>%
+  arrange(power_fn_id, method, b_x) %>% 
+  glimpse() %>%
+  write_csv("power-functions.csv")
+

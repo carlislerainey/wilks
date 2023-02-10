@@ -14,15 +14,16 @@ source("R/sims-helpers.R")
 
 # set up simulation parameters
 # ----------------------------
-n_mc_sims <- 2000
-n_scenarios <- 2000
-scenarios <- crossing(n_x_1s = c(5, 10, 25, 50, 100),
+n_mc_sims <- 2500 # gives 0.5/sqrt(2500) = 1 %age pt mc error
+n_scenarios <- 1000
+scenarios1 <- crossing(n_x_1s = c(5, 10, 25, 50, 100),
                       n_obs = c(50, 100, 1000)) %>%
   filter(n_x_1s < n_obs) %>% 
   sample_n(n_scenarios, replace = TRUE) %>% 
   mutate(b_cons = round(runif(n(), -5, 0), 1),
          n_z = floor(runif(n(), 0, 6)),
          rho = round(runif(n(), 0.0, 0.5), 2)) %>% 
+  write_rds("output/all-generated-dgps.rds") %>%
   mutate(power_fn_id = sample(1:n())) %>%
   glimpse() %>%
   mutate(eta = pmap(list(n_obs, n_z, rho = 0.5), create_eta), 
@@ -42,17 +43,23 @@ scenarios <- crossing(n_x_1s = c(5, 10, 25, 50, 100),
          pr_sep01 = map2_dbl(x, pr_y, ~ exp(sum((1 - .x)*log(.y)))),
          pr_sep00 = map2_dbl(x, pr_y, ~ exp(sum((1 - .x)*log(1 - .y)))),
          pr_sep = (pr_sep11 + pr_sep10) + (pr_sep01 + pr_sep00) - (pr_sep11 + pr_sep10)*(pr_sep01 + pr_sep00)) %>% 
-  group_by(power_fn_id) %>%
+  glimpse()
+
+scenarios <- scenarios1 %>% 
+  group_by(power_fn_id) %>% 
   mutate(pr_sep_at_null = pr_sep[b_x == 0], 
          max_pr_sep = max(pr_sep),
-         max_pr_no_variation = max(pr_no_variation)) %>%
-  nest(data = !c(max_pr_sep, pr_sep_at_null, max_pr_no_variation)) %>% 
-  filter(max_pr_sep > 0.30, max_pr_no_variation < 0.001) %>% glimpse() %>%
-  sample_n(400, replace = FALSE) %>%  glimpse() %>% # replace only while testing
-  unnest(cols = c(data)) %>%
-  #filter(pr_no_variation < 0.001) %>%
+         max_pr_no_variation = max(pr_no_variation)) %>% glimpse() %>%
+  nest(data = !c(power_fn_id, max_pr_sep, pr_sep_at_null, max_pr_no_variation)) %>% 
   ungroup() %>%
-  mutate(scenario_id = sample(1:n())) %>%
+  mutate(keep_dgp = max_pr_sep > 0.30 & max_pr_no_variation < 0.001) %>%
+  write_rds("output/all-generated-dgps-w-keep.rds") %>%
+  filter(keep_dgp) %>% 
+  sample_n(150) %>%   # replace only while testing
+  unnest(cols = c(data)) %>% 
+  #filter(pr_no_variation < 0.001) %>%
+  ungroup() %>% 
+  mutate(scenario_id = sample(1:n())) %>% 
   #filter(power_fn_id %in% 7:12) %>%
   #filter(n_x_1s == 250, b_cons == -2.5, n_obs == 500, n_z == 2) %>%  # the single sim
   glimpse()
@@ -95,7 +102,7 @@ packages <- c("tidyverse",
               "foreach")
 
 # register the workers
-cl <- makeCluster(detectCores(), outfile = "progress/simulation-console-output.log")
+cl <- makeCluster(detectCores() - 3, outfile = "progress/simulation-console-output.log")
 registerDoParallel(cl)
 
 # do simulation

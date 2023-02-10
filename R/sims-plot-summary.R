@@ -11,9 +11,9 @@ smry <- read_rds("output/summarized-simulations.rds") %>%
   group_by(power_fn_id) %>%
   #filter(length(unique(b_x)) == 11) %>%
   mutate(pr_sep_fct = cut(pr_sep, breaks = c(-Inf, 0.1, 0.3, Inf),
-                          labels = c("Low Risk of Separation\n0% to 10%",
-                                     "Moderate Risk of Separation\n10% to 30%",
-                                     "High Risk of Separation\n30% to 100%"))) %>%
+                          labels = c("Low Chance of Separation\n0% to 10%",
+                                     "Moderate Chance of Separation\n10% to 30%",
+                                     "High Chance of Separation\n30% to 100%"))) %>%
   mutate(method = factor(method, levels = c("ML w/ Wald", "ML w/ LR", "ML w/ Score",
                                             "PML (Cauchy) w/ Wald", "PML (Firth) w/ Wald"))) %>%
   glimpse()
