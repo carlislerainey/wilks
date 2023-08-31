@@ -1,7 +1,10 @@
 ---
 title: "Computational Companion"
-subtitle: 'to "Hypothesis Tests Under Separation"'
-output: github_document
+subtitle: to "Hypothesis Tests Under Separation"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -21,8 +24,8 @@ First, I load the data from GitHub, select the variables we need (dropping the r
 library(tidyverse)
 
 # load data and tidy the data
-gh_data_url <- "https://raw.githubusercontent.com/carlislerainey/need/master/Data/politics_and_need_rescale.csv"
-br <- read_csv(gh_data_url) %>% 
+u <- "https://raw.githubusercontent.com/carlislerainey/need/master/Data/politics_and_need_rescale.csv"
+br <- read_csv(u) %>% 
   select(oppose_expansion, gop_governor, percent_favorable_aca, gop_leg, percent_uninsured, 
          bal2012, multiplier, percent_nonwhite, percent_metro) %>%
   # recode binary predictor so that 1 perfectly predicts the outcome

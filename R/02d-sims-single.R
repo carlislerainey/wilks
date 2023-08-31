@@ -70,4 +70,3 @@ k <- k_df %>%
 k_df %>% kable(format = "markdown")
 # write table to file
 k %>% cat(file = "doc/tab/single-sim.tex")
-#k %>% as_image(file = "doc/tab/intuition-gh.png")

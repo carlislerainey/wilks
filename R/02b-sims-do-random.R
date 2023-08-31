@@ -10,7 +10,7 @@ set.seed(0342)
 
 # create helper functions
 # -----------------------
-source("R/sims-helpers.R")
+source("R/02a-sims-helpers.R")
 
 # set up simulation parameters
 # ----------------------------
@@ -23,7 +23,7 @@ scenarios1 <- crossing(n_x_1s = c(5, 10, 25, 50, 100),
   mutate(b_cons = round(runif(n(), -5, 0), 1),
          n_z = floor(runif(n(), 0, 6)),
          rho = round(runif(n(), 0.0, 0.5), 2)) %>% 
-  write_rds("output/all-generated-dgps.rds") %>%
+  #write_rds("output/all-generated-dgps.rds") %>%
   mutate(power_fn_id = sample(1:n())) %>%
   glimpse() %>%
   mutate(eta = pmap(list(n_obs, n_z, rho = 0.5), create_eta), 
@@ -102,7 +102,7 @@ packages <- c("tidyverse",
               "foreach")
 
 # register the workers
-cl <- makeCluster(detectCores() - 3, outfile = "progress/simulation-console-output.log")
+cl <- makeCluster(detectCores(), outfile = "progress/simulation-console-output.log")
 registerDoParallel(cl)
 
 # do simulation

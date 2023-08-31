@@ -82,9 +82,9 @@ compute_wald <- function(ml_fit) {
 } 
 
 # # test the function
-data(turnout, package = "Zelig")
-ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
-compute_wald(ml_fit)
+#data(turnout, package = "Zelig")
+#ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
+#compute_wald(ml_fit)
 
 # compute the wald tests for the pml estimators
 compute_pwald <- function(ml_fit, df) {
@@ -116,9 +116,9 @@ compute_pwald <- function(ml_fit, df) {
 } 
 
 # test the function
-data(turnout, package = "Zelig")
-ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
-compute_pwald(ml_fit, df = turnout)
+#data(turnout, package = "Zelig")
+#ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
+#compute_pwald(ml_fit, df = turnout)
 
 # a function to compute the likelihood ratio
 compute_lr <- function(ml_fit, ml0_fit) {
@@ -146,10 +146,10 @@ compute_lr <- function(ml_fit, ml0_fit) {
 } 
 
 # test the function
-data(turnout, package = "Zelig")
-ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
-ml0_fit <- glm(vote ~ race, data = turnout, family = binomial)
-compute_lr(ml_fit, ml0_fit)
+#data(turnout, package = "Zelig")
+#ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
+#ml0_fit <- glm(vote ~ race, data = turnout, family = binomial)
+#compute_lr(ml_fit, ml0_fit)
 
 # a function to compute the score
 compute_score <- function(ml_fit, ml0_fit, df) {
@@ -181,18 +181,18 @@ compute_score <- function(ml_fit, ml0_fit, df) {
 } 
 
 # test the function
-data(turnout, package = "Zelig")
-ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
-ml0_fit <- glm(vote ~ race, data = turnout, family = binomial)
-compute_score(ml_fit, ml0_fit, df = turnout)
+#data(turnout, package = "Zelig")
+#ml_fit <- glm(vote ~ age + race, data = turnout, family = binomial)
+#ml0_fit <- glm(vote ~ race, data = turnout, family = binomial)
+#compute_score(ml_fit, ml0_fit, df = turnout)
 
 
 
 # test combination
-compute_wald(ml_fit) %>%
-  bind_rows(compute_pwald(ml_fit, df = turnout)) %>%
-  bind_rows(compute_lr(ml_fit, ml0_fit)) %>%
-  bind_rows(compute_score(ml_fit, ml0_fit, df = turnout))
+#compute_wald(ml_fit) %>%
+#  bind_rows(compute_pwald(ml_fit, df = turnout)) %>%
+#  bind_rows(compute_lr(ml_fit, ml0_fit)) %>%
+#  bind_rows(compute_score(ml_fit, ml0_fit, df = turnout))
 
 # a function to simulate a p-value from it's sampling distribution given X and pr(y)
 simulate_p <- function(sims_info, scenario_index, simulation_index) {
@@ -263,7 +263,7 @@ report_time_worked <- function(t1 = start_time, t2 = start_i_time) {
   time_worked <- difftime(Sys.time(), t2, units = "auto")
   frac_finished <- i/length(sims_info$scenario_id)
   d <- difftime(Sys.time(), t1, units = "auto")
-  etf <- Sys.time() + d/frac_finished
+  etf <- t1 + d/frac_finished
   msg <- paste0("\t finished in ", 
                 round(time_worked[[1]]),  " ", units(time_worked), ". \t ETF: ", etf)
   file <- paste0("progress/progress-", worker_name, ".log")

@@ -36,7 +36,7 @@ smry %>%
        y = "Power", 
        color = "Coefficient")
 
-ggsave("doc/fig/many-sims.pdf", height = 4, width = 8, scale = 1.3)
+ggsave("doc/fig/fig02-many-sims.pdf", height = 4, width = 8, scale = 1.3)
 
 gg3_df <- smry %>%
   group_by(b_x, method) %>%
@@ -62,7 +62,7 @@ ggplot() +
        y = "Power", 
        color = "Chance of Separation")
 
-ggsave("doc/fig/power-funs.pdf", height = 4, width = 8, scale = 1.3)
+ggsave("doc/fig/fig03-power-funs.pdf", height = 4, width = 8, scale = 1.3)
 
 design2 <- "
  ABCDE
@@ -82,7 +82,7 @@ ggplot() +
   labs(x = "Coefficient of Potentially Separating Variable", 
        y = "Power", 
        color = "Chance of Separation")
-ggsave("doc/fig/power-funs-by-seprisk.pdf", height = 6.3, width = 12, scale = 1)
+ggsave("doc/fig/fig05-power-funs-by-seprisk.pdf", height = 6.3, width = 12, scale = 1)
 
 
 gg3_df %>%
@@ -99,7 +99,7 @@ gg3_df %>%
        y = "Median Power Across the Diverse Scenarios", 
        color = "Estimation Method")
 
-ggsave("doc/fig/median-power.pdf", height = 4, width = 8, scale = 1.3)
+ggsave("doc/fig/fig04-median-power.pdf", height = 4, width = 8, scale = 1.3)
 
 smry %>%
   group_by(method) %>%
@@ -118,64 +118,4 @@ smry %>%
   labs(x = "Chance of Separation", 
        y = "Size")
 
-ggsave("doc/fig/size.pdf", height = 4, width = 8, scale = 1.3)
-
-
-smry %>%
-  filter(abs(b_x) >= 0) %>%
-  pivot_wider(names_from = method, values_from = pr_reject) %>%
-  glimpse() %>%
-  ggplot(aes(x = `ML w/ LR`, y = `ML w/ Score`, color = b_x, size = pr_sep)) + 
-  geom_abline(intercept = 0, slope = 1) + 
-  geom_point(alpha = 0.5, shape = 21) + 
-  scale_x_continuous(labels = scales::percent) +
-  scale_y_continuous(labels = scales::percent) + 
-  scale_color_gradient2(low = "#d95f02", mid = "#1b9e77", high = "#d95f02", midpoint = 0) + 
-  theme_bw() + 
-  labs(color = "Coefficient",
-       size = "Chance of Separation")
-ggsave("doc/fig/lr-v-score.pdf", height = 3, width = 6, scale = 1.3)
-
-
-
-# older plots ------
-# 
-# gg1_df <- smry %>%
-#   ungroup() %>%
-#   select(power_fn_id, scenario_id, b_x, pr_sep) %>%
-#   distinct() %>%
-#   glimpse()
-# 
-# ggplot(smry) + 
-#   geom_area(data = gg1_df, aes(x = b_x, y = pr_sep),
-#             color = "black", alpha = 0.1, size = 0.1) + 
-#   geom_line(aes(x = b_x, y = pr_reject, color = method, group = interaction(method, power_fn_id)),
-#             alpha = 0.5) + 
-#   facet_wrap(vars(power_fn_id)) + 
-#   theme_minimal()
-#   
-# 
-# ggplot(smry, aes(x = factor(b_x), y = pr_reject, color = method, size = pr_sep)) + 
-#   geom_jitter(shape = 21) + 
-#   geom_boxplot() + 
-#   facet_wrap(vars(method), ncol = 1)
-# 
-# gg2_df <- smry %>%
-#   group_by(b_x, method, pr_sep_fct) %>%
-#   summarize(median_pr_reject = median(pr_reject))
-# ggplot(gg2_df, aes(x = b_x, y = median_pr_reject)) + 
-#   facet_grid(cols = vars(pr_sep_fct), rows = vars(method)) + 
-#   geom_point(data = smry, aes(x = b_x, y = pr_reject, size = pr_sep), shape = 21, alpha = 0.2) +
-#   geom_line() + 
-#   geom_hline(yintercept = 0.05) + 
-#   theme_bw()
-# 
-# smry %>% 
-#   filter(b_x %in% c(-10, 10, 4, -4, 0)) %>%
-#   ggplot(aes(x = b_x, y = pr_reject, group = b_x)) + 
-#   geom_boxplot() + 
-#   facet_grid(cols = vars(pr_sep_fct), rows = vars(method))
-#   
-# 
-# 
-# 
+ggsave("doc/fig/fig06-size.pdf", height = 4, width = 8, scale = 1.3)
